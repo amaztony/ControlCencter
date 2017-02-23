@@ -1,0 +1,31 @@
+﻿<Window x:Class="ControlCenter.About"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ControlCenter"
+        mc:Ignorable="d" WindowStartupLocation="CenterScreen"
+        Title="关于" Height="200" Width="300" ResizeMode="NoResize"
+        Icon="Resources\run.ico">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50*"/>
+            <RowDefinition Height="150*"/>
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0" Margin="5">
+            <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center">
+                体能测试-控制中心
+            </TextBlock>
+        </Grid>
+        <Grid Grid.Row="1" Margin="5">
+            <StackPanel Grid.Column="0" Margin="10">
+                <TextBlock>版本编号：Verison 0.1</TextBlock>
+                <TextBlock>更新日期：2016年12月21日 星期三</TextBlock>
+                <TextBlock>反馈邮箱：gaozt2014@outlook.com</TextBlock>
+                <TextBlock>感谢以下开源项目：</TextBlock>
+                <TextBlock>ChrisLeeGit/SerialAssistant</TextBlock>
+                <TextBlock>swmal/EPPlus</TextBlock>
+            </StackPanel>
+        </Grid>
+    </Grid>
+</Window>

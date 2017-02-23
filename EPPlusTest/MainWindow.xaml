@@ -1,0 +1,112 @@
+﻿<Window x:Class="EPPlusTest.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:EPPlusTest"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="400" Width="600" ResizeMode="NoResize">
+    <Grid>
+        <StackPanel HorizontalAlignment="Left" Height="350" Margin="10,10,0,0" VerticalAlignment="Top" Width="250">
+            <Grid HorizontalAlignment="Left" Margin="10,10,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="115"></ColumnDefinition>
+                    <ColumnDefinition Width="115"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <Button Name="SelectButton" Click="SelectButton_Click" Content="选择Excel" Grid.Column="0" Width="80" HorizontalAlignment="Left"></Button>
+                <Button Name="ConnectButton" Click="ConnectButton_Click" Content="连接" Grid.Column="1" Margin="15,0" Width="80" HorizontalAlignment="Left"></Button>
+            </Grid>
+            <Grid HorizontalAlignment="Left" Margin="10,10,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="90"></ColumnDefinition>
+                    <ColumnDefinition Width="140"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="25"></RowDefinition>
+                    <RowDefinition Height="25"></RowDefinition>
+                    <RowDefinition Height="25"></RowDefinition>
+                    <RowDefinition Height="25"></RowDefinition>
+                </Grid.RowDefinitions>
+                <TextBlock Grid.Column="0" Grid.Row="0" HorizontalAlignment="Left" Margin="0,0,0,0" TextWrapping="Wrap" Text="学号" VerticalAlignment="Center"/>
+                <TextBox Name="IDTextBox" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left" Height="20" Margin="0,0,0,0" Text="" VerticalAlignment="Center" Width="120"/>
+                <TextBlock Grid.Column="0" Grid.Row="1" HorizontalAlignment="Left" Margin="0,0,0,0" TextWrapping="Wrap" Text="姓名" VerticalAlignment="Center"/>
+                <TextBox Name="NameTextBox" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Left" Height="20" Margin="0,0,0,0" Text="" VerticalAlignment="Center" Width="120"/>
+                <TextBlock Grid.Column="0" Grid.Row="2" HorizontalAlignment="Left" Margin="0,0,0,0" TextWrapping="Wrap" Text="专业班级" VerticalAlignment="Center"/>
+                <TextBox Name="ClassTextBox" Grid.Column="1" Grid.Row="2" HorizontalAlignment="Left" Height="20" Margin="0,0,0,0" Text="" VerticalAlignment="Center" Width="120"/>
+                <TextBlock Grid.Column="0" Grid.Row="3" HorizontalAlignment="Left" Margin="0,0,0,0" TextWrapping="Wrap" Text="性别" VerticalAlignment="Center"/>
+                <ComboBox Name="SexComboBox" Grid.Column="1" Grid.Row="3" HorizontalAlignment="Left" Height="20" Margin="0,0,0,0" Text="" VerticalAlignment="Center" Width="120"/>
+            </Grid>
+            <Grid HorizontalAlignment="Left" Margin="10,20,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="115"></ColumnDefinition>
+                    <ColumnDefinition Width="115"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <Button Name="SimuRegButton" Click="SimuRegButton_Click" Content="模拟检录" Grid.Column="0" Width="80" HorizontalAlignment="Left"></Button>
+                <Button Name="ConfirmButton" Click="ConfirmButton_Click" Content="确认录入" Grid.Column="1" Margin="15,0" Width="80" HorizontalAlignment="Left"></Button>
+            </Grid>
+            <Grid HorizontalAlignment="Left" Margin="10,10,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="90"></ColumnDefinition>
+                    <ColumnDefinition Width="140"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="25"></RowDefinition>
+                </Grid.RowDefinitions>
+                <TextBlock Grid.Column="0" Grid.Row="0" HorizontalAlignment="Left" Margin="0,0,0,0" TextWrapping="Wrap" Text="跑道范围    1~" VerticalAlignment="Center"/>
+                <TextBox Name="RunwayTextBox" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left" Height="20" Margin="0,0,0,0" Text="" VerticalAlignment="Center" Width="120"/>
+            </Grid>
+            <Grid HorizontalAlignment="Left" Margin="10,10,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="115"></ColumnDefinition>
+                    <ColumnDefinition Width="115"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <Button Name="AssignButton" Click="AssignButton_Click"  Content="分配跑道" Grid.Column="0" Margin="0,0" Width="80" HorizontalAlignment="Left"></Button>
+                <Button Name="SimuStartButton" Click="SimuStartButton_Click"  Content="模拟发令" Grid.Column="1" Margin="15,0" Width="80" HorizontalAlignment="Left"></Button>
+            </Grid>
+            <Grid HorizontalAlignment="Left" Margin="10,10,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="90"></ColumnDefinition>
+                    <ColumnDefinition Width="140"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="25"></RowDefinition>
+                </Grid.RowDefinitions>
+                <TextBlock Grid.Column="0" Grid.Row="0" HorizontalAlignment="Left" Margin="0,0,0,0" TextWrapping="Wrap" Text="冲线者跑道号" VerticalAlignment="Center"/>
+                <ComboBox Name="ArrivComboBox" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left" Height="20" Margin="0,0,0,0" Text="" VerticalAlignment="Center" Width="120"/>
+            </Grid>
+            <Grid HorizontalAlignment="Left" Margin="10,10,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="115"></ColumnDefinition>
+                    <ColumnDefinition Width="115"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <Button Name="SimuArrivButton" Click="SimuArrivButton_Click"  Content="模拟冲线" Grid.Column="0" Margin="0,0" Width="80" HorizontalAlignment="Left"></Button>
+                <Button Name="RestartButton" Click="RestartButton_Click"  Content="新的开始" Grid.Column="1" Margin="15,0" Width="80" HorizontalAlignment="Left"></Button>
+            </Grid>
+
+        </StackPanel>
+        <StackPanel Height="350" Width="300" Margin="270,10,0,0" HorizontalAlignment="Left" VerticalAlignment="Top">
+            <Grid  Height="300" Width="280" Margin="10,10,0,0" HorizontalAlignment="Left" VerticalAlignment="Top">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="100*"></RowDefinition>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                </Grid.RowDefinitions>
+                <DataGrid Name="mainDataGrid" AutoGenerateColumns="False" Width="Auto" Height="Auto" Grid.Row="0" Margin="0,0,0,10">
+                    <!--行头宽度设为0-->
+                    <DataGrid.RowHeaderStyle>
+                        <Style TargetType="DataGridRowHeader">
+                            <Setter Property="Width" Value="0"/>
+                        </Style>
+                    </DataGrid.RowHeaderStyle>
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Binding="{Binding ID}" Header="学号" Width="100*"></DataGridTextColumn>
+                        <DataGridTextColumn Binding="{Binding Name}" Header="姓名" Width="60*"></DataGridTextColumn>
+                        <DataGridTextColumn Binding="{Binding Runway}" Header="跑道" Width="60*"></DataGridTextColumn>
+                        <DataGridTextColumn Binding="{Binding Score}" Header="成绩" Width="60*"></DataGridTextColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+                <Button Name="ReportButton" Click="ReportButton_Click" Content="另存本次报告" Grid.Row="1" Margin="10,10" Width="100" HorizontalAlignment="Left"></Button>
+                <Button Name="SaveButton" Click="SaveButton_Click" Content="合并到Excel" Grid.Row="1" Margin="10,10" Width="100" HorizontalAlignment="Right"></Button>
+            </Grid>
+        </StackPanel>
+    </Grid>
+</Window>
