@@ -67,6 +67,7 @@
     <Compile Include="About.xaml.cs">
       <DependentUpon>About.xaml</DependentUpon>
     </Compile>
+    <Compile Include="MySqlHelper.cs" />
     <Compile Include="UIEventHandler.cs" />
     <Page Include="About.xaml">
       <SubType>Designer</SubType>

@@ -22,8 +22,8 @@
         <Grid Grid.Row="2" Margin="5">
             <GroupBox Header="关于" Margin="5">
                 <StackPanel Margin="10">
-                    <TextBlock>版本编号：Verison 1.0</TextBlock>
-                    <TextBlock>更新日期：2017年1月9日 星期一</TextBlock>
+                    <TextBlock>版本编号：Verison 2.0</TextBlock>
+                    <TextBlock>更新日期：2017年2月15日 星期三</TextBlock>
                     <TextBlock>反馈邮箱：gaozt2014@outlook.com</TextBlock>
                     <TextBlock/>
                     <Separator/>
