@@ -43,9 +43,12 @@ namespace PFT_System
         string indata;
 
         //数据库相关
+        static string hostAddress = "138.128.199.25";
+        static string userName = "sut";
+        static string userPassword = "g17ZGWz5CN2L66gI";
         static string databaseName = "china_pft";
         static string tableName = "sut";
-        MySqlConnection conn = new MySqlConnection("Database='" + databaseName + "';Data Source=localhost;Persist Security Info=yes;UserId=root;PWD=cyys2012;");
+        MySqlConnection conn = new MySqlConnection("Database='" + databaseName + "';Data Source=" + hostAddress + ";Persist Security Info=yes;UserId=" + userName + ";PWD=" + userPassword + ";");
 
         #region 数据库面板
         private void connectSqlButton_Click(object sender, RoutedEventArgs e)
