@@ -62,7 +62,7 @@ namespace PFT_System
                     connectSqlButton.Content = "断开连接";
                     manualRegButton.IsEnabled = true;
 
-                    StatusBar("成功连接到数据库", "Yellow");
+                    StatusBar("成功连接到数据库！", "Yellow");
 
                 }
                 catch (Exception ex)
@@ -80,7 +80,7 @@ namespace PFT_System
                 manualRegButton.IsEnabled = false;
                 confirmButton.IsEnabled = false;
 
-                StatusBar("已断开连接", "Blue");
+                StatusBar("已断开连接。", "Blue");
             }
         }
 
@@ -97,7 +97,7 @@ namespace PFT_System
                     //cmd.ExecuteReader();
                 }
 
-                StatusBar("成功提交到数据库", "Yellow");
+                StatusBar("成功提交到数据库！", "Yellow");
 
             }
             catch (Exception ex)
