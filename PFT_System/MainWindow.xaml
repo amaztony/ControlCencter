@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PFT_System"
         mc:Ignorable="d" WindowStartupLocation="CenterScreen"
-        Title="体能测评系统(Version 1.0)"
+        Title="体能测评系统(Version 2.0)"
         Height="600"
         ResizeMode="CanMinimize"
         SizeToContent="Width"
@@ -13,7 +13,7 @@
     <DockPanel Name="rootPanel">
         <!--菜单栏-->
         <Menu DockPanel.Dock="Top" Name="menuBar" Padding="2">
-            <MenuItem Header="文件(_F)">
+            <!--<MenuItem Header="文件(_F)">
                 <MenuItem Name="selectExcelMenuItem" Header="选择Excel(_S)" Click="selectExcelButton_Click"></MenuItem>
                 <MenuItem Name="connectExcelMenuItem" Header="连接(_L)" Click="connectExcelButton_Click" IsEnabled="{Binding ElementName=connectExcelButton, Path=IsEnabled}"></MenuItem>
                 <Separator />
@@ -22,7 +22,7 @@
                 <MenuItem Name="saveAsReportMenuItem" Header="另存本次报告" Click="saveAsReportButton_Click"></MenuItem>
                 <Separator />
                 <MenuItem Name="exitMenuItem" Header="退出" Click="exitMenuItem_Click"></MenuItem>
-            </MenuItem>
+            </MenuItem>-->
 
             <MenuItem Header="视图(_V)">
                 <MenuItem Name="operationViewMenuItem" Header="操作面板" IsChecked="True" Click="operationViewMenuItem_Click"></MenuItem>
@@ -101,10 +101,17 @@
                                 </Grid>
                             </GroupBox>
                             <!--发送区-->
-                            <GroupBox Grid.Row="1" Header="发送区" BorderThickness="1" BorderBrush="#FF7199E0" IsEnabled="{Binding ElementName=portsComboBox, Path=IsEnabled}">
+                            <GroupBox Grid.Row="1" Header="发送区" BorderThickness="1" BorderBrush="#FF7199E0">
                                 <StackPanel>
                                     <TextBox Name="sendDataTextBox" FontFamily="Lucida Console" Grid.Column="0" VerticalAlignment="Center" Padding="3" Margin="5">Test</TextBox>
-                                    <Button Name="sendDataButton" Click="sendDataButton_Click" HorizontalAlignment="Right" VerticalAlignment="Center" Padding="3" Margin="5" Width="80">发送</Button>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="10*"></ColumnDefinition>
+                                            <ColumnDefinition Width="10*"></ColumnDefinition>
+                                        </Grid.ColumnDefinitions>
+                                        <Button Name="sendTestButton" Click="sendTestButton_Click" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center" Padding="3" Margin="5" Width="80">测试</Button>
+                                        <Button Name="sendDataButton" Click="sendDataButton_Click" Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center" Padding="3" Margin="5" Width="80"  IsEnabled="{Binding ElementName=portsComboBox, Path=IsEnabled}">发送</Button>
+                                    </Grid>
                                 </StackPanel>
                             </GroupBox>
                         </Grid>
@@ -201,23 +208,46 @@
                 </GroupBox>
             </Grid>
 
-            <!--Excel面板-->
+            <!--数据面板-->
             <Grid Name="excelPanel" Visibility="Visible" Width="320">
-                <GroupBox Header="Excel面板" Margin="5" BorderThickness="1" BorderBrush="#FF7199E0">
+                <GroupBox Header="数据面板" Margin="5" BorderThickness="1" BorderBrush="#FF7199E0">
                     <DockPanel>
                         <!--连接面板-->
                         <Grid DockPanel.Dock="Top" Margin="5">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="10*"></ColumnDefinition>
+                                <ColumnDefinition Width="14*" ></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Padding="3" Margin="5">服务器地址</TextBlock>
+                            <TextBox Name="hostAddressTextBox" IsEnabled="True" Grid.Column="1" Padding="3" Margin="5">138.128.199.25</TextBox>
+                        </Grid>
+                        <Grid DockPanel.Dock="Top" Margin="5">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"></ColumnDefinition>
+                                <ColumnDefinition Width="8*"></ColumnDefinition>
+                                <ColumnDefinition Width="Auto"></ColumnDefinition>
+                                <ColumnDefinition Width="24*"></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Padding="3" Margin="5">用户名</TextBlock>
+                            <TextBox Name="userNameTextBox" IsEnabled="{Binding ElementName=hostAddressTextBox, Path=IsEnabled}" Grid.Column="1" Padding="3" Margin="5">sut</TextBox>
+                            <TextBlock Grid.Column="2" Padding="3" Margin="5">密码</TextBlock>
+                            <PasswordBox Name="userPasswordPasswordBox" PasswordChar="●" Password="g17ZGWz5CN2L66gI" IsEnabled="{Binding ElementName=hostAddressTextBox, Path=IsEnabled}" Grid.Column="3" Padding="3" Margin="5"/>
+                        </Grid>
+                        <Grid DockPanel.Dock="Top" Margin="5">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="12*"></ColumnDefinition>
                                 <ColumnDefinition Width="10*"></ColumnDefinition>
                                 <ColumnDefinition Width="10*"></ColumnDefinition>
                             </Grid.ColumnDefinitions>
-                            <Button Name="selectExcelButton" Click="selectExcelButton_Click" Grid.Column="0" Padding="3" Margin="5">选择Excel</Button>
+                            <Button Name="connectSqlButton" Click="connectSqlButton_Click" Grid.Column="0" Padding="3" Margin="5">连接数据库</Button>
+                            <Button Name="saveAsReportButton" Click="saveAsReportButton_Click" Grid.Column="1" Padding="3" Margin="5">另存报告</Button>
+                            <Button Name="updateSqlButton" Click="updateSqlButton_Click" Grid.Column="2" Padding="3" Margin="5" IsEnabled="{Binding ElementName=manualRegButton, Path=IsEnabled}">提交成绩</Button>
+                            <!--<Button Name="selectExcelButton" Click="selectExcelButton_Click" Grid.Column="0" Padding="3" Margin="5">选择Excel</Button>
                             <TextBox Name="fileName" IsReadOnly="True" Grid.Column="1" Padding="3" Margin="5">未选择文件</TextBox>
-                            <Button Name="connectExcelButton" Click="connectExcelButton_Click" Grid.Column="2" Padding="3" Margin="5"  IsEnabled="False">连接</Button>
+                            <Button Name="connectExcelButton" Click="connectExcelButton_Click" Grid.Column="2" Padding="3" Margin="5"  IsEnabled="False">连接</Button>-->
                         </Grid>
                         <!--保存面板-->
-                        <Grid DockPanel.Dock="Bottom" Margin="5">
+                        <!--<Grid DockPanel.Dock="Bottom" Margin="5">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="10*"></ColumnDefinition>
                                 <ColumnDefinition Width="10*"></ColumnDefinition>
@@ -226,7 +256,7 @@
                             <Button Name="mergeToCurrentButton" Click="mergeToCurrentButton_Click" Grid.Column="0" Padding="3" Margin="5" IsEnabled="False">并入当前Excel</Button>
                             <Button Name="mergeToExcelButton" Click="mergeToExcelButton_Click" Grid.Column="1" Padding="3" Margin="5">并入其他Excel</Button>
                             <Button Name="saveAsReportButton" Click="saveAsReportButton_Click" Grid.Column="2" Padding="3" Margin="5">另存本次报告</Button>
-                        </Grid>
+                        </Grid>-->
                         <!--数据表格-->
                         <Grid Margin="5">
                             <Grid.ColumnDefinitions>

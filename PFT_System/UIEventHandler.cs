@@ -14,6 +14,7 @@ using System.Text;
 using System.Windows.Threading;
 using System.Windows.Documents;
 using System.Text.RegularExpressions;
+using MySql.Data.MySqlClient;
 
 //Name          :       Physical Fitness Test System
 //Environment   :       .NET Framework 4.0
@@ -31,56 +32,49 @@ namespace PFT_System
         int order;
         DataTable dt;
 
-        string FilePath;    //学生名单Excel路径
+        //string FilePath;    //学生名单Excel路径
 
-        ExcelPackage package;
-        ExcelWorksheet sheet;
+        //ExcelPackage package;
+        //ExcelWorksheet sheet;
 
         Stopwatch stopwatch = new Stopwatch();
 
         private SerialPort serialPort = new SerialPort();
         string indata;
 
-        #region Excel面板
-        private void selectExcelButton_Click(object sender, RoutedEventArgs e)
+        //数据库相关
+        //static string hostAddress = "138.128.199.25";
+        //static string userName = "sut";
+        //static string userPassword = "g17ZGWz5CN2L66gI";
+        string hostAddress;
+        string userName;
+        string userPassword;
+        static string databaseName = "china_pft";
+        static string tableName = "sut";
+        MySqlConnection conn;
+
+        #region 数据库面板
+        private void connectSqlButton_Click(object sender, RoutedEventArgs e)
         {
-            Microsoft.Win32.OpenFileDialog dialog =
-                new Microsoft.Win32.OpenFileDialog();
-            dialog.Title = "选择包含所有学生名单的Excel";
-            dialog.Multiselect = false;
-            dialog.Filter = "Excel 工作薄|*.xlsx";
-            if (dialog.ShowDialog() == true)
+            if (connectSqlButton.Content.ToString() == "连接数据库")
             {
-                FilePath = dialog.FileName;
-            }
-            else return;
-
-            //File.Copy(FilePath, "连接前备份" + DateTime.Now.ToString("HHmm") + @".bak");
-            fileName.Text = Path.GetFileName(FilePath);
-
-            connectExcelButton.IsEnabled = true;
-            mergeToCurrentButton.IsEnabled = true;
-
-            StatusBar("已选择 " + FilePath, "Blue");
-        }
-
-        private void connectExcelButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (connectExcelButton.Content.ToString() == "连接")
-            {
-                //FilePath = @"Model.xlsx";
-
-                //UI阻塞
-                //StatusBar("正在连接" + FilePath + "……", "Yellow");
                 try
                 {
-                    FileInfo existingFile = new FileInfo(FilePath);
-                    package = new ExcelPackage(existingFile);
-                    sheet = package.Workbook.Worksheets[1];
-                    connectExcelButton.Content = "关闭";
+                    //构造数据库连接字符串
+                    hostAddress = hostAddressTextBox.Text;
+                    userName = userNameTextBox.Text;
+                    userPassword = userPasswordPasswordBox.Password;
+                    conn = new MySqlConnection("Database='" + databaseName + "';Data Source=" + hostAddress + ";Persist Security Info=yes;UserId=" + userName + ";PWD=" + userPassword + ";");
+
+                    //连接数据库
+                    conn.Open();
+                    connectSqlButton.Content = "断开连接";
+
+                    hostAddressTextBox.IsEnabled = false;
+
                     manualRegButton.IsEnabled = true;
 
-                    StatusBar("成功连接到 " + FilePath, "Yellow");
+                    StatusBar("成功连接到数据库！", "Yellow");
 
                 }
                 catch (Exception ex)
@@ -88,47 +82,135 @@ namespace PFT_System
                     StatusBar(ex.Message, "Red");
                     return;
                 }
-                //catch
-                //{
-                //    StatusBar("连接失败，请检查文件是否正确！", "Red");
-                //}
             }
-            else if (connectExcelButton.Content.ToString() == "关闭")
+            else if (connectSqlButton.Content.ToString() == "断开连接")
             {
-                package.Dispose();
-                connectExcelButton.Content = "连接";
+                //断开数据库连接
+                conn.Close();
+
+                connectSqlButton.Content = "连接数据库";
+
+                hostAddressTextBox.IsEnabled = true;
+
                 manualRegButton.IsEnabled = false;
                 confirmButton.IsEnabled = false;
 
-                StatusBar("当前文件 " + FilePath, "Blue");
+                StatusBar("已断开连接。", "Blue");
             }
         }
 
-        private void mergeToCurrentButton_Click(object sender, RoutedEventArgs e)
+        private void updateSqlButton_Click(object sender, RoutedEventArgs e)
         {
-            MergeToExcel(FilePath);
-        }
-
-        private void mergeToExcelButton_Click(object sender, RoutedEventArgs e)
-        {
-            Microsoft.Win32.OpenFileDialog dialog =
-                new Microsoft.Win32.OpenFileDialog();
-            dialog.Title = "合并成绩到现有Excel";
-            dialog.Multiselect = false;
-            dialog.Filter = "Excel 工作薄|*.xlsx"; // Filter files by extension
-
-            string path = string.Empty;
-
-            // Process save file dialog box results
-            if (dialog.ShowDialog() == true)
+            try
             {
-                // Save document
-                path = dialog.FileName;
-            }
-            else return;
+                MySqlCommand cmd = conn.CreateCommand();//命令对象（用来封装需要在数据库执行的语句）
 
-            MergeToExcel(path);
+                for (int i = 0; i < order; i++)
+                {
+                    cmd.CommandText = "UPDATE " + tableName + " SET 50米跑=" + dt.Rows[i]["Score"] + " WHERE 学籍号=" + dt.Rows[i]["ID"];
+                    cmd.ExecuteNonQuery();
+                    //cmd.ExecuteReader();
+                }
+
+                StatusBar("成功提交到数据库！", "Yellow");
+
+            }
+            catch (Exception ex)
+            {
+                StatusBar(ex.Message, "Red");
+                return;
+            }
         }
+        #endregion
+
+        #region Excel面板
+        //private void selectExcelButton_Click(object sender, RoutedEventArgs e)
+        //{
+        //    Microsoft.Win32.OpenFileDialog dialog =
+        //        new Microsoft.Win32.OpenFileDialog();
+        //    dialog.Title = "选择包含所有学生名单的Excel";
+        //    dialog.Multiselect = false;
+        //    dialog.Filter = "Excel 工作薄|*.xlsx";
+        //    if (dialog.ShowDialog() == true)
+        //    {
+        //        FilePath = dialog.FileName;
+        //    }
+        //    else return;
+
+        //    //File.Copy(FilePath, "连接前备份" + DateTime.Now.ToString("HHmm") + @".bak");
+        //    fileName.Text = Path.GetFileName(FilePath);
+
+        //    connectExcelButton.IsEnabled = true;
+        //    mergeToCurrentButton.IsEnabled = true;
+
+        //    StatusBar("已选择 " + FilePath, "Blue");
+        //}
+
+        //private void connectExcelButton_Click(object sender, RoutedEventArgs e)
+        //{
+        //    if (connectExcelButton.Content.ToString() == "连接")
+        //    {
+        //        //FilePath = @"Model.xlsx";
+
+        //        //UI阻塞
+        //        //StatusBar("正在连接" + FilePath + "……", "Yellow");
+        //        try
+        //        {
+        //            FileInfo existingFile = new FileInfo(FilePath);
+        //            package = new ExcelPackage(existingFile);
+        //            sheet = package.Workbook.Worksheets[1];
+        //            connectExcelButton.Content = "关闭";
+        //            manualRegButton.IsEnabled = true;
+
+        //            StatusBar("成功连接到 " + FilePath, "Yellow");
+
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            StatusBar(ex.Message, "Red");
+        //            return;
+        //        }
+        //        //catch
+        //        //{
+        //        //    StatusBar("连接失败，请检查文件是否正确！", "Red");
+        //        //}
+        //    }
+        //    else if (connectExcelButton.Content.ToString() == "关闭")
+        //    {
+        //        package.Dispose();
+        //        connectExcelButton.Content = "连接";
+        //        manualRegButton.IsEnabled = false;
+        //        confirmButton.IsEnabled = false;
+
+        //        StatusBar("当前文件 " + FilePath, "Blue");
+        //    }
+        //}
+
+        //private void mergeToCurrentButton_Click(object sender, RoutedEventArgs e)
+        //{
+        //    MergeToExcel(FilePath);
+        //}
+
+        //private void mergeToExcelButton_Click(object sender, RoutedEventArgs e)
+        //{
+        //    Microsoft.Win32.OpenFileDialog dialog =
+        //        new Microsoft.Win32.OpenFileDialog();
+        //    dialog.Title = "合并成绩到现有Excel";
+        //    dialog.Multiselect = false;
+        //    dialog.Filter = "Excel 工作薄|*.xlsx"; // Filter files by extension
+
+        //    string path = string.Empty;
+
+        //    // Process save file dialog box results
+        //    if (dialog.ShowDialog() == true)
+        //    {
+        //        // Save document
+        //        path = dialog.FileName;
+        //    }
+        //    else return;
+
+        //    MergeToExcel(path);
+        //}
 
         private void saveAsReportButton_Click(object sender, RoutedEventArgs e)
         {
@@ -184,6 +266,12 @@ namespace PFT_System
                     }
 
                     worksheet.Cells.AutoFitColumns(0);  //Autofit columns for all cells
+
+                    using (var range = worksheet.Cells[1, 1, order + 1, 4])
+                    {
+                        range.Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                        range.Style.VerticalAlignment = ExcelVerticalAlignment.Center;
+                    }
 
                     // save our new workbook and we are done!
                     excelPackage.Save();
@@ -272,7 +360,7 @@ namespace PFT_System
                     worksheet.Cells[1, 5].Value = "专业班级";
                     worksheet.Cells[1, 6].Value = classTextBox.Text;
 
-                    worksheet.Cells[2, 1].Value = "性别代码";
+                    worksheet.Cells[2, 1].Value = "性别代码";//"性别"：1-男，2-女
                     worksheet.Cells[2, 3].Value = "出生日期";
                     worksheet.Cells[2, 5].Value = "家庭住址";
 
@@ -288,31 +376,40 @@ namespace PFT_System
                     worksheet.Cells[5, 3].Value = "1000米跑";
                     worksheet.Cells[5, 5].Value = "1分钟仰卧起坐";
 
-                    var query1 = (from cell in sheet.Cells["d:d"] where cell.Value.Equals(ID) select cell);
-
-                    foreach (var cell in query1)
+                    MySqlCommand cmd = conn.CreateCommand();//命令对象（用来封装需要在数据库执行的语句）
+                    cmd.CommandText = "SELECT * FROM " + tableName + " WHERE 学籍号=" + ID;
+                    MySqlDataReader sdr = cmd.ExecuteReader();
+                    if (sdr.HasRows)
                     {
-                        int RowIDx = int.Parse(cell.Address.Substring(1));  //取得行号
+                        //循环读取返回的数据
+                        while (sdr.Read())
+                        {
+                            try { worksheet.Cells[2, 2].Value = sdr.GetString(sdr.GetOrdinal("性别")); } catch (Exception) { }
+                            try { worksheet.Cells[2, 4].Value = sdr.GetString(sdr.GetOrdinal("出生日期")); } catch (Exception) { }
+                            try { worksheet.Cells[2, 6].Value = sdr.GetString(sdr.GetOrdinal("家庭住址")); } catch (Exception) { }
 
-                        worksheet.Cells[2, 2].Value = sheet.Cells[RowIDx, 7].Value;
-                        worksheet.Cells[2, 4].Value = sheet.Cells[RowIDx, 8].Value;
-                        worksheet.Cells[2, 6].Value = sheet.Cells[RowIDx, 9].Value;
+                            try { worksheet.Cells[3, 2].Value = sdr.GetString(sdr.GetOrdinal("身高")); } catch (Exception) { }
+                            try { worksheet.Cells[3, 4].Value = sdr.GetString(sdr.GetOrdinal("体重")); } catch (Exception) { }
+                            try { worksheet.Cells[3, 6].Value = sdr.GetString(sdr.GetOrdinal("肺活量")); } catch (Exception) { }
 
-                        worksheet.Cells[3, 2].Value = sheet.Cells[RowIDx, 10].Value;
-                        worksheet.Cells[3, 4].Value = sheet.Cells[RowIDx, 11].Value;
-                        worksheet.Cells[3, 6].Value = sheet.Cells[RowIDx, 12].Value;
+                            try { worksheet.Cells[4, 2].Value = sdr.GetString(sdr.GetOrdinal("50米跑")); } catch (Exception) { }
+                            try { worksheet.Cells[4, 4].Value = sdr.GetString(sdr.GetOrdinal("立定跳远")); } catch (Exception) { }
+                            try { worksheet.Cells[4, 6].Value = sdr.GetString(sdr.GetOrdinal("坐位体前屈")); } catch (Exception) { }
 
-                        worksheet.Cells[4, 2].Value = sheet.Cells[RowIDx, 13].Value;
-                        worksheet.Cells[4, 4].Value = sheet.Cells[RowIDx, 14].Value;
-                        worksheet.Cells[4, 6].Value = sheet.Cells[RowIDx, 15].Value;
-
-                        worksheet.Cells[5, 2].Value = sheet.Cells[RowIDx, 16].Value;
-                        worksheet.Cells[5, 4].Value = sheet.Cells[RowIDx, 17].Value;
-                        worksheet.Cells[5, 6].Value = sheet.Cells[RowIDx, 18].Value;
-                        break;
+                            try { worksheet.Cells[5, 2].Value = sdr.GetString(sdr.GetOrdinal("800米跑")); } catch (Exception) { }
+                            try { worksheet.Cells[5, 4].Value = sdr.GetString(sdr.GetOrdinal("1000米跑")); } catch (Exception) { }
+                            try { worksheet.Cells[5, 6].Value = sdr.GetString(sdr.GetOrdinal("1分钟仰卧起坐")); } catch (Exception) { }
+                        }
                     }
+                    sdr.Close();
 
                     worksheet.Cells.AutoFitColumns(0);  //Autofit columns for all cells
+
+                    using (var range = worksheet.Cells[1, 1, 5, 6])
+                    {
+                        range.Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                        range.Style.VerticalAlignment = ExcelVerticalAlignment.Center;
+                    }
 
                     excelPackage.Save();
                 }
@@ -415,6 +512,21 @@ namespace PFT_System
             recvDataRichTextBox.Document.Blocks.Clear();
         }
 
+        private void sendTestButton_Click(object sender, RoutedEventArgs e)
+        {
+            string textToSend = sendDataTextBox.Text;
+            if (string.IsNullOrEmpty(textToSend))
+            {
+                StatusBar("要发送的内容不能为空！", "Red");
+                return;
+            }
+            else
+            {
+                DataProcess(textToSend);
+                ShowMessage(textToSend);
+            }
+        }
+
         private void sendDataButton_Click(object sender, RoutedEventArgs e)
         {
             string textToSend = sendDataTextBox.Text;
@@ -440,10 +552,14 @@ namespace PFT_System
             if (state == false)
             {
                 operationPanel.Visibility = Visibility.Visible;
+                statusInfoLength += 40;
+                StatusBar("已展开操作面板。", "Blue");
             }
             else
             {
                 operationPanel.Visibility = Visibility.Collapsed;
+                statusInfoLength -= 40;
+                StatusBar("已收起操作面板。", "Blue");
             }
 
             operationViewMenuItem.IsChecked = !state;
@@ -456,10 +572,14 @@ namespace PFT_System
             if (state == false)
             {
                 communicationPanel.Visibility = Visibility.Visible;
+                statusInfoLength += 40;
+                StatusBar("已展开通信面板。", "Blue");
             }
             else
             {
                 communicationPanel.Visibility = Visibility.Collapsed;
+                statusInfoLength -= 40;
+                StatusBar("已收起操作面板。", "Blue");
             }
 
             communicationViewMenuItem.IsChecked = !state;
@@ -496,19 +616,18 @@ namespace PFT_System
             timeDateTextBlock.Text = timeDateString;
         }
 
+        int statusInfoLength = 100;
         /// <summary>
         /// 信息提示
         /// </summary>
         /// <param name="message">提示信息</param>
         private void StatusBar(string message)
         {
-            // #FF007ACC
-            statusBar.Background = new SolidColorBrush(Color.FromArgb(0xFF, 0x00, 0x7A, 0xCC));
-            statusInfoTextBlock.Text = message;
+            statusInfoTextBlock.Text = GetSubString(message, statusInfoLength);
         }
 
         /// <summary>
-        /// 信息提示 三种
+        /// 信息提示 区分颜色模式
         /// </summary>
         /// <param name="message">提示信息</param>
         private void StatusBar(string message, string mode)
@@ -528,9 +647,36 @@ namespace PFT_System
                 // #FF68217A
                 statusBar.Background = new SolidColorBrush(Color.FromArgb(0xFF, 0xFF, 0x21, 0x2A));
             }
-            statusInfoTextBlock.Text = message;
+            StatusBar(message);
         }
 
+        public static string GetSubString(string origStr, int endIndex)
+        {
+            if (origStr == null || origStr.Length == 0 || endIndex < 0)
+                return "";
+            int bytesCount = Encoding.GetEncoding("gb2312").GetByteCount(origStr);
+            if (bytesCount > endIndex)
+            {
+                int readyLength = 0;
+                int byteLength;
+                for (int i = 0; i < origStr.Length; i++)
+                {
+                    byteLength = Encoding.GetEncoding("gb2312").GetByteCount(new char[] { origStr[i] });
+                    readyLength += byteLength;
+                    if (readyLength == endIndex)
+                    {
+                        origStr = origStr.Substring(0, i + 1) + "...";
+                        break;
+                    }
+                    else if (readyLength > endIndex)
+                    {
+                        origStr = origStr.Substring(0, i) + "...";
+                        break;
+                    }
+                }
+            }
+            return origStr;
+        }
         #endregion
 
         #region 其他
@@ -547,65 +693,90 @@ namespace PFT_System
             mainDataGrid.ItemsSource = dt.DefaultView;
         }
 
-        private void MergeToExcel(string path)
+        //private void MergeToExcel(string path)
+        //{
+        //    //合并前备份目标文件，防止错误覆盖
+        //    File.Copy(path, "合并前备份" + DateTime.Now.ToString("HHmm") + @".bak");
+
+        //    FileInfo outFile = new FileInfo(path);
+
+        //    //FileInfo outFile = new FileInfo(@"out.xlsx");
+        //    //if (!outFile.Exists)    //不合适
+        //    //{
+        //    //    File.Copy(FilePath, @"out.xlsx");
+        //    //}
+        //    try
+        //    {
+        //        using (ExcelPackage excelPackage = new ExcelPackage(outFile))
+        //        {
+        //            ExcelWorksheet worksheet = excelPackage.Workbook.Worksheets[1];
+        //            for (int i = 0; i < order; i++)
+        //            {
+        //                var query1 = (from cell in worksheet.Cells["d:d"] where cell.Value.Equals(dt.Rows[i]["ID"]) select cell);
+        //                foreach (var cell in query1)
+        //                {
+        //                    int RowIDx = int.Parse(cell.Address.Substring(1));  //取得行号
+        //                    worksheet.Cells[RowIDx, 13].Value = dt.Rows[i]["Score"];
+        //                    break;
+        //                }
+        //            }
+        //            excelPackage.Save();
+        //        }
+
+        //        StatusBar("合并成功 " + path, "Yellow");
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        StatusBar(ex.Message, "Red");
+        //        return;
+        //    }
+        //    //catch
+        //    //{
+        //    //    StatusBar("合并失败，请检查文件是否正确！", "Red");
+
+        //    //}
+        //}
+
+        private void Register(string ID)
         {
-            //合并前备份目标文件，防止错误覆盖
-            File.Copy(path, "合并前备份" + DateTime.Now.ToString("HHmm") + @".bak");
-
-            FileInfo outFile = new FileInfo(path);
-
-            //FileInfo outFile = new FileInfo(@"out.xlsx");
-            //if (!outFile.Exists)    //不合适
-            //{
-            //    File.Copy(FilePath, @"out.xlsx");
-            //}
+            //try-catch
+            MySqlCommand cmd = conn.CreateCommand();//命令对象（用来封装需要在数据库执行的语句）
+            cmd.CommandText = "SELECT * FROM " + tableName + " WHERE 学籍号=" + ID;
             try
             {
-                using (ExcelPackage excelPackage = new ExcelPackage(outFile))
+                MySqlDataReader sdr = cmd.ExecuteReader();
+                if (sdr.HasRows)
                 {
-                    ExcelWorksheet worksheet = excelPackage.Workbook.Worksheets[1];
-                    for (int i = 0; i < order; i++)
+                    //循环读取返回的数据
+                    while (sdr.Read())
                     {
-                        var query1 = (from cell in worksheet.Cells["d:d"] where cell.Value.Equals(dt.Rows[i]["ID"]) select cell);
-                        foreach (var cell in query1)
-                        {
-                            int RowIDx = int.Parse(cell.Address.Substring(1));  //取得行号
-                            worksheet.Cells[RowIDx, 13].Value = dt.Rows[i]["Score"];
-                            break;
-                        }
+                        studentIDTextBox.Text = ID;
+                        nameTextBox.Text = sdr.GetString(sdr.GetOrdinal("姓名"));
+                        classTextBox.Text = sdr.GetString(sdr.GetOrdinal("班级名称"));
+                        sexComboBox.ItemsSource = new string[] { "男", "女" };
+                        sexComboBox.SelectedIndex = sdr.GetInt32(sdr.GetOrdinal("性别")) - 1;
                     }
-                    excelPackage.Save();
                 }
+                sdr.Close();
 
-                StatusBar("合并成功 " + path, "Yellow");
+                confirmButton.IsEnabled = true;
             }
             catch (Exception ex)
             {
                 StatusBar(ex.Message, "Red");
-                return;
             }
-            //catch
+
+            //var query1 = (from cell in sheet.Cells["d:d"] where cell.Value.Equals(ID) select cell);
+            //foreach (var cell in query1)
             //{
-            //    StatusBar("合并失败，请检查文件是否正确！", "Red");
-
+            //    int RowIDx = int.Parse(cell.Address.Substring(1));  //取得行号
+            //    studentIDTextBox.Text = ID;
+            //    nameTextBox.Text = sheet.Cells[RowIDx, 6].Value.ToString();
+            //    classTextBox.Text = sheet.Cells[RowIDx, 3].Value.ToString();
+            //    sexComboBox.ItemsSource = new string[] { "男", "女" };
+            //    sexComboBox.SelectedIndex = sheet.Cells[RowIDx, 7].GetValue<Int16>() - 1;
+            //    break;
             //}
-        }
-
-        private void Register(string ID)
-        {
-            var query1 = (from cell in sheet.Cells["d:d"] where cell.Value.Equals(ID) select cell);
-
-            foreach (var cell in query1)
-            {
-                int RowIDx = int.Parse(cell.Address.Substring(1));  //取得行号
-                studentIDTextBox.Text = ID;
-                nameTextBox.Text = sheet.Cells[RowIDx, 6].Value.ToString();
-                classTextBox.Text = sheet.Cells[RowIDx, 3].Value.ToString();
-                sexComboBox.ItemsSource = new string[] { "男", "女" };
-                sexComboBox.SelectedIndex = sheet.Cells[RowIDx, 7].GetValue<Int16>() - 1;
-                break;
-            }
-            confirmButton.IsEnabled = true;
         }
 
         private int[] BuildRandomSequence(int low, int high)
@@ -698,7 +869,7 @@ namespace PFT_System
                 portsComboBox.SelectedIndex = 0;
                 portsComboBox.IsEnabled = true;
 
-                StatusBar(string.Format("查找到可以使用的端口{0}个。", portsComboBox.Items.Count.ToString()));
+                StatusBar(string.Format("查找到可以使用的端口{0}个。", portsComboBox.Items.Count.ToString()), "Blue");
             }
             else
             {
