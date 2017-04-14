@@ -43,12 +43,15 @@ namespace PFT_System
         string indata;
 
         //数据库相关
-        static string hostAddress = "138.128.199.25";
-        static string userName = "sut";
-        static string userPassword = "g17ZGWz5CN2L66gI";
+        //static string hostAddress = "138.128.199.25";
+        //static string userName = "sut";
+        //static string userPassword = "g17ZGWz5CN2L66gI";
+        string hostAddress;
+        string userName;
+        string userPassword;
         static string databaseName = "china_pft";
         static string tableName = "sut";
-        MySqlConnection conn = new MySqlConnection("Database='" + databaseName + "';Data Source=" + hostAddress + ";Persist Security Info=yes;UserId=" + userName + ";PWD=" + userPassword + ";");
+        MySqlConnection conn;
 
         #region 数据库面板
         private void connectSqlButton_Click(object sender, RoutedEventArgs e)
@@ -57,9 +60,18 @@ namespace PFT_System
             {
                 try
                 {
+                    //构造数据库连接字符串
+                    hostAddress = hostAddressTextBox.Text;
+                    userName = userNameTextBox.Text;
+                    userPassword = userPasswordPasswordBox.Password;
+                    conn = new MySqlConnection("Database='" + databaseName + "';Data Source=" + hostAddress + ";Persist Security Info=yes;UserId=" + userName + ";PWD=" + userPassword + ";");
+
                     //连接数据库
                     conn.Open();
                     connectSqlButton.Content = "断开连接";
+
+                    hostAddressTextBox.IsEnabled = false;
+
                     manualRegButton.IsEnabled = true;
 
                     StatusBar("成功连接到数据库！", "Yellow");
@@ -77,6 +89,9 @@ namespace PFT_System
                 conn.Close();
 
                 connectSqlButton.Content = "连接数据库";
+
+                hostAddressTextBox.IsEnabled = true;
+
                 manualRegButton.IsEnabled = false;
                 confirmButton.IsEnabled = false;
 
@@ -537,10 +552,14 @@ namespace PFT_System
             if (state == false)
             {
                 operationPanel.Visibility = Visibility.Visible;
+                statusInfoLength += 40;
+                StatusBar("已展开操作面板。", "Blue");
             }
             else
             {
                 operationPanel.Visibility = Visibility.Collapsed;
+                statusInfoLength -= 40;
+                StatusBar("已收起操作面板。", "Blue");
             }
 
             operationViewMenuItem.IsChecked = !state;
@@ -553,10 +572,14 @@ namespace PFT_System
             if (state == false)
             {
                 communicationPanel.Visibility = Visibility.Visible;
+                statusInfoLength += 40;
+                StatusBar("已展开通信面板。", "Blue");
             }
             else
             {
                 communicationPanel.Visibility = Visibility.Collapsed;
+                statusInfoLength -= 40;
+                StatusBar("已收起操作面板。", "Blue");
             }
 
             communicationViewMenuItem.IsChecked = !state;
@@ -593,19 +616,18 @@ namespace PFT_System
             timeDateTextBlock.Text = timeDateString;
         }
 
+        int statusInfoLength = 100;
         /// <summary>
         /// 信息提示
         /// </summary>
         /// <param name="message">提示信息</param>
         private void StatusBar(string message)
         {
-            // #FF007ACC
-            statusBar.Background = new SolidColorBrush(Color.FromArgb(0xFF, 0x00, 0x7A, 0xCC));
-            statusInfoTextBlock.Text = message;
+            statusInfoTextBlock.Text = GetSubString(message, statusInfoLength);
         }
 
         /// <summary>
-        /// 信息提示 三种
+        /// 信息提示 区分颜色模式
         /// </summary>
         /// <param name="message">提示信息</param>
         private void StatusBar(string message, string mode)
@@ -625,9 +647,36 @@ namespace PFT_System
                 // #FF68217A
                 statusBar.Background = new SolidColorBrush(Color.FromArgb(0xFF, 0xFF, 0x21, 0x2A));
             }
-            statusInfoTextBlock.Text = message;
+            StatusBar(message);
         }
 
+        public static string GetSubString(string origStr, int endIndex)
+        {
+            if (origStr == null || origStr.Length == 0 || endIndex < 0)
+                return "";
+            int bytesCount = Encoding.GetEncoding("gb2312").GetByteCount(origStr);
+            if (bytesCount > endIndex)
+            {
+                int readyLength = 0;
+                int byteLength;
+                for (int i = 0; i < origStr.Length; i++)
+                {
+                    byteLength = Encoding.GetEncoding("gb2312").GetByteCount(new char[] { origStr[i] });
+                    readyLength += byteLength;
+                    if (readyLength == endIndex)
+                    {
+                        origStr = origStr.Substring(0, i + 1) + "...";
+                        break;
+                    }
+                    else if (readyLength > endIndex)
+                    {
+                        origStr = origStr.Substring(0, i) + "...";
+                        break;
+                    }
+                }
+            }
+            return origStr;
+        }
         #endregion
 
         #region 其他
@@ -820,7 +869,7 @@ namespace PFT_System
                 portsComboBox.SelectedIndex = 0;
                 portsComboBox.IsEnabled = true;
 
-                StatusBar(string.Format("查找到可以使用的端口{0}个。", portsComboBox.Items.Count.ToString()));
+                StatusBar(string.Format("查找到可以使用的端口{0}个。", portsComboBox.Items.Count.ToString()), "Blue");
             }
             else
             {

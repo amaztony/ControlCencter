@@ -216,6 +216,26 @@
                         <Grid DockPanel.Dock="Top" Margin="5">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="10*"></ColumnDefinition>
+                                <ColumnDefinition Width="14*" ></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Padding="3" Margin="5">服务器地址</TextBlock>
+                            <TextBox Name="hostAddressTextBox" IsEnabled="True" Grid.Column="1" Padding="3" Margin="5">138.128.199.25</TextBox>
+                        </Grid>
+                        <Grid DockPanel.Dock="Top" Margin="5">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"></ColumnDefinition>
+                                <ColumnDefinition Width="8*"></ColumnDefinition>
+                                <ColumnDefinition Width="Auto"></ColumnDefinition>
+                                <ColumnDefinition Width="24*"></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Padding="3" Margin="5">用户名</TextBlock>
+                            <TextBox Name="userNameTextBox" IsEnabled="{Binding ElementName=hostAddressTextBox, Path=IsEnabled}" Grid.Column="1" Padding="3" Margin="5">sut</TextBox>
+                            <TextBlock Grid.Column="2" Padding="3" Margin="5">密码</TextBlock>
+                            <PasswordBox Name="userPasswordPasswordBox" PasswordChar="●" Password="g17ZGWz5CN2L66gI" IsEnabled="{Binding ElementName=hostAddressTextBox, Path=IsEnabled}" Grid.Column="3" Padding="3" Margin="5"/>
+                        </Grid>
+                        <Grid DockPanel.Dock="Top" Margin="5">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="12*"></ColumnDefinition>
                                 <ColumnDefinition Width="10*"></ColumnDefinition>
                                 <ColumnDefinition Width="10*"></ColumnDefinition>
                             </Grid.ColumnDefinitions>
