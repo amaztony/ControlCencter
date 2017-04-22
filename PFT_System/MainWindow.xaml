@@ -5,24 +5,14 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PFT_System"
         mc:Ignorable="d" WindowStartupLocation="CenterScreen"
-        Title="体能测评系统(Version 2.0)"
-        Height="600"
+        Title="体能测评系统(Version 3.0)"
+        Height="750"
         ResizeMode="CanMinimize"
         SizeToContent="Width"
         Icon="Icons\run.ico">
     <DockPanel Name="rootPanel">
         <!--菜单栏-->
         <Menu DockPanel.Dock="Top" Name="menuBar" Padding="2">
-            <!--<MenuItem Header="文件(_F)">
-                <MenuItem Name="selectExcelMenuItem" Header="选择Excel(_S)" Click="selectExcelButton_Click"></MenuItem>
-                <MenuItem Name="connectExcelMenuItem" Header="连接(_L)" Click="connectExcelButton_Click" IsEnabled="{Binding ElementName=connectExcelButton, Path=IsEnabled}"></MenuItem>
-                <Separator />
-                <MenuItem Name="mergeToCurrentMenuItem" Header="并入当前Excel(_M)" Click="mergeToCurrentButton_Click" IsEnabled="{Binding ElementName=mergeToCurrentButton, Path=IsEnabled}"></MenuItem>
-                <MenuItem Name="mergeToExcelMenuItem" Header="并入其他Excel" Click="mergeToExcelButton_Click"></MenuItem>
-                <MenuItem Name="saveAsReportMenuItem" Header="另存本次报告" Click="saveAsReportButton_Click"></MenuItem>
-                <Separator />
-                <MenuItem Name="exitMenuItem" Header="退出" Click="exitMenuItem_Click"></MenuItem>
-            </MenuItem>-->
 
             <MenuItem Header="视图(_V)">
                 <MenuItem Name="operationViewMenuItem" Header="操作面板" IsChecked="True" Click="operationViewMenuItem_Click"></MenuItem>
@@ -39,27 +29,78 @@
             <StatusBarItem HorizontalAlignment="Left">
                 <TextBlock Name="statusInfoTextBlock" Foreground="White">欢迎使用体能测评系统！</TextBlock>
             </StatusBarItem>
-            <!--<StatusBarItem>
-                <ProgressBar Name="progressBar" Foreground="White" BorderBrush="White" Background="{Binding ElementName=statusBar, Path=Background}" Visibility="Collapsed" Width="150" Height="10" Value="10" SmallChange="1" IsIndeterminate="True" Margin="10,0,0,0"></ProgressBar>
-            </StatusBarItem>
-            <StatusBarItem Margin="0,0,0,0" Name="dataRecvStatusBarItem" Visibility="Collapsed">
-                <StackPanel Orientation="Horizontal">
-                    <Ellipse Height="5" Width="5" Fill="White" Margin="0,0,5,0"></Ellipse>
-                    <Ellipse Height="5" Width="5" Fill="White" Margin="0,0,5,0"></Ellipse>
-                    <Ellipse Height="5" Width="5" Fill="White" Margin="0,0,5,0"></Ellipse>
-                    <Ellipse Height="5" Width="5" Fill="White" Margin="0,0,5,0"></Ellipse>
-                    <Ellipse Height="5" Width="5" Fill="White" Margin="0,0,5,0"></Ellipse>
-                    <Ellipse Height="5" Width="5" Fill="White"></Ellipse>
-                </StackPanel>
-            </StatusBarItem>-->
             <StatusBarItem HorizontalAlignment="Right">
                 <TextBlock Name="timeDateTextBlock" Foreground="White"></TextBlock>
             </StatusBarItem>
         </StatusBar>
         <!--主体面板-->
         <DockPanel Margin="5">
+            <!--数据面板-->
+            <Grid Name="excelPanel" Visibility="Visible" DockPanel.Dock="Left" Width="710">
+                <GroupBox Header="数据面板" Margin="5" BorderThickness="1" BorderBrush="#FF7199E0">
+                    <DockPanel>
+                        <!--连接面板-->
+                        <Grid DockPanel.Dock="Top" Margin="5">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="80"></ColumnDefinition>
+                                <ColumnDefinition Width="140" ></ColumnDefinition>
+                                <ColumnDefinition Width="60"></ColumnDefinition>
+                                <ColumnDefinition Width="70"></ColumnDefinition>
+                                <ColumnDefinition Width="40"></ColumnDefinition>
+                                <ColumnDefinition Width="160*"></ColumnDefinition>
+                                <ColumnDefinition Width="120"></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Padding="3" Margin="5">服务器地址</TextBlock>
+                            <TextBox Grid.Column="1" Name="hostAddressTextBox" IsEnabled="True" Padding="3" Margin="5">138.128.199.25</TextBox>
+                            <TextBlock Grid.Column="2" Padding="3" Margin="5">用户名</TextBlock>
+                            <TextBox Grid.Column="3" Name="userNameTextBox" IsEnabled="{Binding ElementName=hostAddressTextBox, Path=IsEnabled}" Padding="3" Margin="5">sut</TextBox>
+                            <TextBlock Grid.Column="4" Padding="3" Margin="5">密码</TextBlock>
+                            <PasswordBox Grid.Column="5" Name="userPasswordPasswordBox" PasswordChar="●" Password="g17ZGWz5CN2L66gI" IsEnabled="{Binding ElementName=hostAddressTextBox, Path=IsEnabled}" Padding="3" Margin="5"/>
+                            <Button Grid.Column="6" Name="connectSqlButton" Click="connectSqlButton_Click" Padding="3" Margin="5">连接数据库</Button>
+                        </Grid>
+                        <Grid DockPanel.Dock="Top" Margin="5">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="100"></ColumnDefinition>
+                                <ColumnDefinition Width="100*"></ColumnDefinition>
+                                <ColumnDefinition Width="100"></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <Button Grid.Column="0" Name="saveAsReportButton" Click="saveAsReportButton_Click" Padding="3" Margin="5">另存报告</Button>
+                            <Button Grid.Column="2" Name="updateSqlButton" Click="updateSqlButton_Click" Padding="3" Margin="5" IsEnabled="{Binding ElementName=manualRegButton, Path=IsEnabled}">提交成绩</Button>
+                        </Grid>
+                        <!--数据表格-->
+                        <Grid Margin="5">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="10*"></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <DataGrid Name="mainDataGrid" IsReadOnly="True" AutoGenerateColumns="False" Padding="3" Margin="5">
+                                <!--行头宽度设为0-->
+                                <DataGrid.RowHeaderStyle>
+                                    <Style TargetType="DataGridRowHeader">
+                                        <Setter Property="Width" Value="0"/>
+                                    </Style>
+                                </DataGrid.RowHeaderStyle>
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Binding="{Binding ID}" Header="学号" Width="100"></DataGridTextColumn>
+                                    <DataGridTextColumn Binding="{Binding Name}" Header="姓名" Width="60"></DataGridTextColumn>
+                                    <DataGridTextColumn Binding="{Binding Height}" Header="身高" Width="60"></DataGridTextColumn>
+                                    <DataGridTextColumn Binding="{Binding Weight}" Header="体重" Width="60"></DataGridTextColumn>
+                                    <DataGridTextColumn Binding="{Binding Vital}" Header="肺活量" Width="60"></DataGridTextColumn>
+                                    <DataGridTextColumn Binding="{Binding Run800}" Header="800米" Width="60"></DataGridTextColumn>
+                                    <DataGridTextColumn Binding="{Binding Run1000}" Header="1000米" Width="60"></DataGridTextColumn>
+                                    <DataGridTextColumn Binding="{Binding Run50}" Header="50米" Width="60"></DataGridTextColumn>
+                                    <DataGridTextColumn Binding="{Binding Jump}" Header="立定跳远" Width="65"></DataGridTextColumn>
+                                    <DataGridTextColumn Binding="{Binding Flexion}" Header="坐位体前屈" Width="80"></DataGridTextColumn>
+                                    <DataGridTextColumn Binding="{Binding SitUps}" Header="仰卧起坐" Width="65"></DataGridTextColumn>
+                                    <DataGridTextColumn Binding="{Binding PullUp}" Header="引体向上" Width="65"></DataGridTextColumn>
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </Grid>
+                    </DockPanel>
+                </GroupBox>
+            </Grid>
+
             <!--通信面板-->
-            <Grid Name="communicationPanel" DockPanel.Dock="Right" Visibility="Visible" Width="250">
+            <Grid Name="communicationPanel" DockPanel.Dock="Bottom" Visibility="Visible" Width="250">
                 <GroupBox Header="通信面板" Margin="5" BorderThickness="1" BorderBrush="#FF7199E0">
                     <DockPanel>
                         <!--可用端口-->
@@ -91,7 +132,7 @@
                             <GroupBox Grid.Row="0" Header="接收区" BorderThickness="1" BorderBrush="#FF7199E0">
                                 <Grid Margin="0,5">
                                     <Grid.RowDefinitions>
-                                        <RowDefinition Height="100*"></RowDefinition>
+                                        <RowDefinition Height="100"></RowDefinition>
                                         <RowDefinition Height="40"></RowDefinition>
                                     </Grid.RowDefinitions>
                                     <RichTextBox Name="recvDataRichTextBox" Grid.Row="0" Padding="3" Margin="5" BorderThickness="1" IsReadOnly="True">
@@ -120,7 +161,7 @@
             </Grid>
 
             <!--检录与操作面板-->
-            <Grid Name="operationPanel" DockPanel.Dock="Right" Visibility="Visible" Width="250">
+            <Grid Name="operationPanel" DockPanel.Dock="Top" Visibility="Visible" Width="250">
                 <GroupBox Header="操作面板" Margin="5" BorderThickness="1" BorderBrush="#FF7199E0">
                     <DockPanel>
                         <!--手动检录-->
@@ -136,7 +177,7 @@
                         <Grid Margin="5">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="80*"></RowDefinition>
-                                <RowDefinition Height="100*"></RowDefinition>
+                                <RowDefinition Height="0"></RowDefinition>
                             </Grid.RowDefinitions>
                             <!--检录信息面板-->
                             <GroupBox Grid.Row="0" Header="检录信息" BorderThickness="1" BorderBrush="#FF7199E0">
@@ -169,7 +210,7 @@
                                 </StackPanel>
                             </GroupBox>
                             <!--人工操作面板-->
-                            <GroupBox Grid.Row="1" Header="人工操作" BorderThickness="1" BorderBrush="#FF7199E0">
+                            <GroupBox Grid.Row="1" Header="人工操作" Visibility="Hidden" BorderThickness="1" BorderBrush="#FF7199E0">
                                 <StackPanel>
                                     <!--分配跑道-->
                                     <Grid Margin="5">
@@ -208,78 +249,6 @@
                 </GroupBox>
             </Grid>
 
-            <!--数据面板-->
-            <Grid Name="excelPanel" Visibility="Visible" Width="320">
-                <GroupBox Header="数据面板" Margin="5" BorderThickness="1" BorderBrush="#FF7199E0">
-                    <DockPanel>
-                        <!--连接面板-->
-                        <Grid DockPanel.Dock="Top" Margin="5">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="10*"></ColumnDefinition>
-                                <ColumnDefinition Width="14*" ></ColumnDefinition>
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Grid.Column="0" Padding="3" Margin="5">服务器地址</TextBlock>
-                            <TextBox Name="hostAddressTextBox" IsEnabled="True" Grid.Column="1" Padding="3" Margin="5">138.128.199.25</TextBox>
-                        </Grid>
-                        <Grid DockPanel.Dock="Top" Margin="5">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"></ColumnDefinition>
-                                <ColumnDefinition Width="8*"></ColumnDefinition>
-                                <ColumnDefinition Width="Auto"></ColumnDefinition>
-                                <ColumnDefinition Width="24*"></ColumnDefinition>
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Grid.Column="0" Padding="3" Margin="5">用户名</TextBlock>
-                            <TextBox Name="userNameTextBox" IsEnabled="{Binding ElementName=hostAddressTextBox, Path=IsEnabled}" Grid.Column="1" Padding="3" Margin="5">sut</TextBox>
-                            <TextBlock Grid.Column="2" Padding="3" Margin="5">密码</TextBlock>
-                            <PasswordBox Name="userPasswordPasswordBox" PasswordChar="●" Password="g17ZGWz5CN2L66gI" IsEnabled="{Binding ElementName=hostAddressTextBox, Path=IsEnabled}" Grid.Column="3" Padding="3" Margin="5"/>
-                        </Grid>
-                        <Grid DockPanel.Dock="Top" Margin="5">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="12*"></ColumnDefinition>
-                                <ColumnDefinition Width="10*"></ColumnDefinition>
-                                <ColumnDefinition Width="10*"></ColumnDefinition>
-                            </Grid.ColumnDefinitions>
-                            <Button Name="connectSqlButton" Click="connectSqlButton_Click" Grid.Column="0" Padding="3" Margin="5">连接数据库</Button>
-                            <Button Name="saveAsReportButton" Click="saveAsReportButton_Click" Grid.Column="1" Padding="3" Margin="5">另存报告</Button>
-                            <Button Name="updateSqlButton" Click="updateSqlButton_Click" Grid.Column="2" Padding="3" Margin="5" IsEnabled="{Binding ElementName=manualRegButton, Path=IsEnabled}">提交成绩</Button>
-                            <!--<Button Name="selectExcelButton" Click="selectExcelButton_Click" Grid.Column="0" Padding="3" Margin="5">选择Excel</Button>
-                            <TextBox Name="fileName" IsReadOnly="True" Grid.Column="1" Padding="3" Margin="5">未选择文件</TextBox>
-                            <Button Name="connectExcelButton" Click="connectExcelButton_Click" Grid.Column="2" Padding="3" Margin="5"  IsEnabled="False">连接</Button>-->
-                        </Grid>
-                        <!--保存面板-->
-                        <!--<Grid DockPanel.Dock="Bottom" Margin="5">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="10*"></ColumnDefinition>
-                                <ColumnDefinition Width="10*"></ColumnDefinition>
-                                <ColumnDefinition Width="10*"></ColumnDefinition>
-                            </Grid.ColumnDefinitions>
-                            <Button Name="mergeToCurrentButton" Click="mergeToCurrentButton_Click" Grid.Column="0" Padding="3" Margin="5" IsEnabled="False">并入当前Excel</Button>
-                            <Button Name="mergeToExcelButton" Click="mergeToExcelButton_Click" Grid.Column="1" Padding="3" Margin="5">并入其他Excel</Button>
-                            <Button Name="saveAsReportButton" Click="saveAsReportButton_Click" Grid.Column="2" Padding="3" Margin="5">另存本次报告</Button>
-                        </Grid>-->
-                        <!--数据表格-->
-                        <Grid Margin="5">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="10*"></ColumnDefinition>
-                            </Grid.ColumnDefinitions>
-                            <DataGrid Name="mainDataGrid" IsReadOnly="True" AutoGenerateColumns="False" Padding="3" Margin="5">
-                                <!--行头宽度设为0-->
-                                <DataGrid.RowHeaderStyle>
-                                    <Style TargetType="DataGridRowHeader">
-                                        <Setter Property="Width" Value="0"/>
-                                    </Style>
-                                </DataGrid.RowHeaderStyle>
-                                <DataGrid.Columns>
-                                    <DataGridTextColumn Binding="{Binding ID}" Header="学号" Width="50*"></DataGridTextColumn>
-                                    <DataGridTextColumn Binding="{Binding Name}" Header="姓名" Width="30*"></DataGridTextColumn>
-                                    <DataGridTextColumn Binding="{Binding Runway}" Header="跑道" Width="30*"></DataGridTextColumn>
-                                    <DataGridTextColumn Binding="{Binding Score}" Header="成绩" Width="30*"></DataGridTextColumn>
-                                </DataGrid.Columns>
-                            </DataGrid>
-                        </Grid>
-                    </DockPanel>
-                </GroupBox>
-            </Grid>
         </DockPanel>
     </DockPanel>
 </Window>

@@ -124,94 +124,6 @@ namespace PFT_System
         #endregion
 
         #region Excel面板
-        //private void selectExcelButton_Click(object sender, RoutedEventArgs e)
-        //{
-        //    Microsoft.Win32.OpenFileDialog dialog =
-        //        new Microsoft.Win32.OpenFileDialog();
-        //    dialog.Title = "选择包含所有学生名单的Excel";
-        //    dialog.Multiselect = false;
-        //    dialog.Filter = "Excel 工作薄|*.xlsx";
-        //    if (dialog.ShowDialog() == true)
-        //    {
-        //        FilePath = dialog.FileName;
-        //    }
-        //    else return;
-
-        //    //File.Copy(FilePath, "连接前备份" + DateTime.Now.ToString("HHmm") + @".bak");
-        //    fileName.Text = Path.GetFileName(FilePath);
-
-        //    connectExcelButton.IsEnabled = true;
-        //    mergeToCurrentButton.IsEnabled = true;
-
-        //    StatusBar("已选择 " + FilePath, "Blue");
-        //}
-
-        //private void connectExcelButton_Click(object sender, RoutedEventArgs e)
-        //{
-        //    if (connectExcelButton.Content.ToString() == "连接")
-        //    {
-        //        //FilePath = @"Model.xlsx";
-
-        //        //UI阻塞
-        //        //StatusBar("正在连接" + FilePath + "……", "Yellow");
-        //        try
-        //        {
-        //            FileInfo existingFile = new FileInfo(FilePath);
-        //            package = new ExcelPackage(existingFile);
-        //            sheet = package.Workbook.Worksheets[1];
-        //            connectExcelButton.Content = "关闭";
-        //            manualRegButton.IsEnabled = true;
-
-        //            StatusBar("成功连接到 " + FilePath, "Yellow");
-
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            StatusBar(ex.Message, "Red");
-        //            return;
-        //        }
-        //        //catch
-        //        //{
-        //        //    StatusBar("连接失败，请检查文件是否正确！", "Red");
-        //        //}
-        //    }
-        //    else if (connectExcelButton.Content.ToString() == "关闭")
-        //    {
-        //        package.Dispose();
-        //        connectExcelButton.Content = "连接";
-        //        manualRegButton.IsEnabled = false;
-        //        confirmButton.IsEnabled = false;
-
-        //        StatusBar("当前文件 " + FilePath, "Blue");
-        //    }
-        //}
-
-        //private void mergeToCurrentButton_Click(object sender, RoutedEventArgs e)
-        //{
-        //    MergeToExcel(FilePath);
-        //}
-
-        //private void mergeToExcelButton_Click(object sender, RoutedEventArgs e)
-        //{
-        //    Microsoft.Win32.OpenFileDialog dialog =
-        //        new Microsoft.Win32.OpenFileDialog();
-        //    dialog.Title = "合并成绩到现有Excel";
-        //    dialog.Multiselect = false;
-        //    dialog.Filter = "Excel 工作薄|*.xlsx"; // Filter files by extension
-
-        //    string path = string.Empty;
-
-        //    // Process save file dialog box results
-        //    if (dialog.ShowDialog() == true)
-        //    {
-        //        // Save document
-        //        path = dialog.FileName;
-        //    }
-        //    else return;
-
-        //    MergeToExcel(path);
-        //}
-
         private void saveAsReportButton_Click(object sender, RoutedEventArgs e)
         {
             string sheetName = DateTime.Now.ToString("yyyyMMdd-HH-mm");
@@ -688,54 +600,18 @@ namespace PFT_System
 
             dt.Columns.Add("ID");
             dt.Columns.Add("Name");
-            dt.Columns.Add("Runway");
-            dt.Columns.Add("Score");
+            dt.Columns.Add("Height");
+            dt.Columns.Add("Weight");
+            dt.Columns.Add("Vital");
+            dt.Columns.Add("Run800");
+            dt.Columns.Add("Run1000");
+            dt.Columns.Add("Run50");
+            dt.Columns.Add("Jump");
+            dt.Columns.Add("Flexion");
+            dt.Columns.Add("SitUps");
+            dt.Columns.Add("PullUp");
             mainDataGrid.ItemsSource = dt.DefaultView;
         }
-
-        //private void MergeToExcel(string path)
-        //{
-        //    //合并前备份目标文件，防止错误覆盖
-        //    File.Copy(path, "合并前备份" + DateTime.Now.ToString("HHmm") + @".bak");
-
-        //    FileInfo outFile = new FileInfo(path);
-
-        //    //FileInfo outFile = new FileInfo(@"out.xlsx");
-        //    //if (!outFile.Exists)    //不合适
-        //    //{
-        //    //    File.Copy(FilePath, @"out.xlsx");
-        //    //}
-        //    try
-        //    {
-        //        using (ExcelPackage excelPackage = new ExcelPackage(outFile))
-        //        {
-        //            ExcelWorksheet worksheet = excelPackage.Workbook.Worksheets[1];
-        //            for (int i = 0; i < order; i++)
-        //            {
-        //                var query1 = (from cell in worksheet.Cells["d:d"] where cell.Value.Equals(dt.Rows[i]["ID"]) select cell);
-        //                foreach (var cell in query1)
-        //                {
-        //                    int RowIDx = int.Parse(cell.Address.Substring(1));  //取得行号
-        //                    worksheet.Cells[RowIDx, 13].Value = dt.Rows[i]["Score"];
-        //                    break;
-        //                }
-        //            }
-        //            excelPackage.Save();
-        //        }
-
-        //        StatusBar("合并成功 " + path, "Yellow");
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        StatusBar(ex.Message, "Red");
-        //        return;
-        //    }
-        //    //catch
-        //    //{
-        //    //    StatusBar("合并失败，请检查文件是否正确！", "Red");
-
-        //    //}
-        //}
 
         private void Register(string ID)
         {
@@ -765,18 +641,6 @@ namespace PFT_System
             {
                 StatusBar(ex.Message, "Red");
             }
-
-            //var query1 = (from cell in sheet.Cells["d:d"] where cell.Value.Equals(ID) select cell);
-            //foreach (var cell in query1)
-            //{
-            //    int RowIDx = int.Parse(cell.Address.Substring(1));  //取得行号
-            //    studentIDTextBox.Text = ID;
-            //    nameTextBox.Text = sheet.Cells[RowIDx, 6].Value.ToString();
-            //    classTextBox.Text = sheet.Cells[RowIDx, 3].Value.ToString();
-            //    sexComboBox.ItemsSource = new string[] { "男", "女" };
-            //    sexComboBox.SelectedIndex = sheet.Cells[RowIDx, 7].GetValue<Int16>() - 1;
-            //    break;
-            //}
         }
 
         private int[] BuildRandomSequence(int low, int high)
