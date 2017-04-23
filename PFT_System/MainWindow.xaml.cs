@@ -26,7 +26,6 @@ namespace PFT_System
     /// </summary>
     public partial class MainWindow : Window
     {
-        private DispatcherTimer dispatcherTimer = null;
         public MainWindow()
         {
             InitializeComponent();
@@ -34,26 +33,6 @@ namespace PFT_System
             InitializeMemory();
 
             InitSerialPort();
-
-            dispatcherTimer = new DispatcherTimer();
-            dispatcherTimer.Tick += new EventHandler(OnTimedEvent);
-            dispatcherTimer.Interval = new TimeSpan(0, 0, 0, 1); //UI更新间隔1s
-            dispatcherTimer.Start();
-        }
-
-        private void OnTimedEvent(object sender, EventArgs e)
-        {
-            if (stopwatch.ElapsedMilliseconds >= 10900)
-            {
-                stopwatch.Stop();
-                stopwatchTextBlock.Text = "超时";
-                stopwatchStartPauseButton.IsEnabled = false;
-            }
-            else
-            {
-                stopwatchTextBlock.Text = stopwatch.ElapsedMilliseconds.ToString("00:00:000").Substring(0, 8);
-            }
-            UpdateTimeDate();
         }
     }
 }

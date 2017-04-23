@@ -38,8 +38,6 @@ namespace PFT_System
         //ExcelPackage package;
         //ExcelWorksheet sheet;
 
-        Stopwatch stopwatch = new Stopwatch();
-
         private SerialPort serialPort = new SerialPort();
         string indata;
 
@@ -244,9 +242,7 @@ namespace PFT_System
                 return;
             }
         }
-        #endregion
 
-        #region Excel面板
         private void saveAsReportButton_Click(object sender, RoutedEventArgs e)
         {
             string sheetName = DateTime.Now.ToString("yyyyMMdd-HH-mm");
@@ -356,7 +352,6 @@ namespace PFT_System
             else
             {
                 order++;
-                runwayTextBlock.Text = order.ToString();
                 DataRow dr = dt.NewRow();
                 dr["Machine"] = machineNumberTextBox.Text;
                 dr["ID"] = studentIDTextBox.Text;
@@ -458,61 +453,6 @@ namespace PFT_System
             //    StatusBar("保存失败，请检查文件是否被其他进程占用！", "Red");
             //}
         }
-
-        private void assignButton_Click(object sender, RoutedEventArgs e)
-        {
-            int[] runways = BuildRandomSequence(1, order);
-            for (int i = 0; i < order; i++)
-            {
-                DataRow dr = dt.Rows[i];
-                dr["Runway"] = runways[i];
-            }
-
-            //按跑道号排序
-            DataView dv = dt.DefaultView;
-            dv.Sort = "Runway";
-            dt = dv.ToTable();
-            mainDataGrid.ItemsSource = dt.DefaultView;  //重新绑定
-
-            //模拟到达组合框 添加序号
-            //Array.Sort(runways);
-            //ArrivComboBox.ItemsSource = runways;
-            //ArrivComboBox.SelectedIndex = 0;
-        }
-
-        private void stopwatchResetButton_Click(object sender, RoutedEventArgs e)
-        {
-            stopwatch.Stop();
-            stopwatch.Reset();
-            stopwatchStartPauseButton.Content = "开始";
-            stopwatchStartPauseButton.IsEnabled = true;
-        }
-
-        private void stopwatchStartPauseButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (stopwatchStartPauseButton.Content.ToString() == "开始" || stopwatchStartPauseButton.Content.ToString() == "继续")
-            {
-                dispatcherTimer.Interval = new TimeSpan(0, 0, 0, 0, 1); //UI更新间隔1ms
-                stopwatch.Start();
-                stopwatchStartPauseButton.Content = "暂停";
-            }
-            else if (stopwatchStartPauseButton.Content.ToString() == "暂停")
-            {
-                dispatcherTimer.Interval = new TimeSpan(0, 0, 0, 1); //UI更新间隔1s
-                stopwatch.Stop();
-                stopwatchStartPauseButton.Content = "继续";
-            }
-        }
-
-        private void newMatchButton_Click(object sender, RoutedEventArgs e)
-        {
-            //复位秒表
-            stopwatchResetButton.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
-            //清空数据接收
-            recvDataRichTextBox.Document.Blocks.Clear();
-            //清空数据表格及order变量
-            InitializeMemory();
-        }
         #endregion
 
         #region 通信面板
@@ -577,44 +517,28 @@ namespace PFT_System
             Close();
         }
 
-        private void operationViewMenuItem_Click(object sender, RoutedEventArgs e)
+        private void rightViewMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            bool state = operationViewMenuItem.IsChecked;
+            bool state = rightViewMenuItem.IsChecked;
 
             if (state == false)
             {
                 operationPanel.Visibility = Visibility.Visible;
+                communicationPanel.Visibility = Visibility.Visible;
+
                 statusInfoLength += 40;
-                StatusBar("已展开操作面板。", "Blue");
+                StatusBar("已展开右侧面板。", "Blue");
             }
             else
             {
                 operationPanel.Visibility = Visibility.Collapsed;
-                statusInfoLength -= 40;
-                StatusBar("已收起操作面板。", "Blue");
-            }
-
-            operationViewMenuItem.IsChecked = !state;
-        }
-
-        private void communicationViewMenuItem_Click(object sender, RoutedEventArgs e)
-        {
-            bool state = communicationViewMenuItem.IsChecked;
-
-            if (state == false)
-            {
-                communicationPanel.Visibility = Visibility.Visible;
-                statusInfoLength += 40;
-                StatusBar("已展开通信面板。", "Blue");
-            }
-            else
-            {
                 communicationPanel.Visibility = Visibility.Collapsed;
+
                 statusInfoLength -= 40;
-                StatusBar("已收起操作面板。", "Blue");
+                StatusBar("已收起右侧面板。", "Blue");
             }
 
-            communicationViewMenuItem.IsChecked = !state;
+            rightViewMenuItem.IsChecked = !state;
         }
 
         private void helpMenuItem_Click(object sender, RoutedEventArgs e)
@@ -648,7 +572,7 @@ namespace PFT_System
             timeDateTextBlock.Text = timeDateString;
         }
 
-        int statusInfoLength = 100;
+        int statusInfoLength = 120;
         /// <summary>
         /// 信息提示
         /// </summary>
@@ -769,31 +693,6 @@ namespace PFT_System
             {
                 StatusBar(ex.Message, "Red");
             }
-        }
-
-        private int[] BuildRandomSequence(int low, int high)
-        {
-            int x = 0, tmp = 0;
-            if (low > high)
-            {
-                tmp = low;
-                low = high;
-                high = tmp;
-            }
-            int[] array = new int[high - low + 1];
-            for (int i = low; i <= high; i++)
-            {
-                array[i - low] = i;
-            }
-            Random rand = new Random();
-            for (int i = array.Length - 1; i > 0; i--)
-            {
-                x = rand.Next(0, i + 1);
-                tmp = array[i];
-                array[i] = array[x];
-                array[x] = tmp;
-            }
-            return array;
         }
         #endregion
 

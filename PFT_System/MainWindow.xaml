@@ -15,8 +15,7 @@
         <Menu DockPanel.Dock="Top" Name="menuBar" Padding="2">
 
             <MenuItem Header="视图(_V)">
-                <MenuItem Name="operationViewMenuItem" Header="操作面板" IsChecked="True" Click="operationViewMenuItem_Click"></MenuItem>
-                <MenuItem Name="communicationViewMenuItem" Header="通信面板" IsChecked="True" Click="communicationViewMenuItem_Click"></MenuItem>
+                <MenuItem Name="rightViewMenuItem" Header="右侧面板" IsChecked="True" Click="rightViewMenuItem_Click"></MenuItem>
             </MenuItem>
             
             <MenuItem Header="帮助(_H)">
@@ -214,41 +213,6 @@
                                         <Button Name="confirmButton" Click="confirmButton_Click" IsEnabled="False" Grid.Column="0" Grid.Row="6" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="3" Margin="5" FontSize="18">确认录入</Button>
                                         <Button Name="queryButton" Click="queryButton_Click" IsEnabled="{Binding ElementName=confirmButton, Path=IsEnabled}" Grid.Column="1" Grid.Row="6" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="3" Margin="5" FontSize="18">成绩详单</Button>
                                     </Grid>
-                                </StackPanel>
-                            </GroupBox>
-                            <!--人工操作面板-->
-                            <GroupBox Grid.Row="1" Header="人工操作" Visibility="Hidden" BorderThickness="1" BorderBrush="#FF7199E0">
-                                <StackPanel>
-                                    <!--分配跑道-->
-                                    <Grid Margin="5">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="8*"></ColumnDefinition>
-                                            <ColumnDefinition Width="4*"></ColumnDefinition>
-                                            <ColumnDefinition Width="8*"></ColumnDefinition>
-                                        </Grid.ColumnDefinitions>
-                                        <TextBlock Grid.Column="0" HorizontalAlignment="Right" Text="跑道范围  1 ~ " VerticalAlignment="Center"/>
-                                        <TextBlock Name="runwayTextBlock" Grid.Column="1"  Text="0" VerticalAlignment="Center"/>
-                                        <Button Name="assignButton" Click="assignButton_Click" Grid.Column="2" VerticalAlignment="Center" Padding="3" Margin="5">分配跑道</Button>
-                                    </Grid>
-                                    <!--秒表面板-->
-                                    <GroupBox Header="秒表面板" BorderThickness="1" BorderBrush="#FF7199E0">
-                                        <StackPanel>
-                                            <TextBlock Name="stopwatchTextBlock" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="3" Margin="5" FontSize="25" Text="00:00:00" />
-                                            <!--秒表操作-->
-                                            <Grid Margin="5">
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="10*"></ColumnDefinition>
-                                                    <ColumnDefinition Width="10*"></ColumnDefinition>
-                                                </Grid.ColumnDefinitions>
-                                                <Button Name="stopwatchResetButton" Click="stopwatchResetButton_Click" Grid.Column="0" VerticalAlignment="Center" Padding="3" Margin="5">复位</Button>
-                                                <Button Name="stopwatchStartPauseButton" Click="stopwatchStartPauseButton_Click" Grid.Column="1" VerticalAlignment="Center" Padding="3" Margin="5">开始</Button>
-                                            </Grid>
-                                        </StackPanel>
-                                    </GroupBox>
-                                    <Grid Margin="5">
-                                        <Button Name="newMatchButton" Click="newMatchButton_Click" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="3" Margin="5" Width="120" Height="40" FontSize="24">新的开始</Button>
-                                    </Grid>
-
                                 </StackPanel>
                             </GroupBox>
                         </Grid>
