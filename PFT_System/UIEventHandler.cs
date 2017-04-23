@@ -112,7 +112,7 @@ namespace PFT_System
                     {
                         if (dr[i] != null)
                         {
-                            string itemName = null;
+                            string itemName = string.Empty;
                             switch (dt.Columns[i].ColumnName)
                             {
                                 case "Height":
@@ -193,45 +193,34 @@ namespace PFT_System
             else return;
             //string path = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) +
             //    @"\" + DateTime.Now.ToString("yyyyMMdd") + @".xlsx";
-
+            
             FileInfo reportFile = new FileInfo(path);
 
             if (reportFile.Exists)
             {
                 File.Copy(path, "报告前备份" + DateTime.Now.ToString("HHmm") + @".bak");
                 reportFile.Delete();  // ensures we create a new workbook
-                reportFile = new FileInfo(path);
                 //File.Create(path);
             }
+            File.Copy("reportModel.xlsx", path);
+            reportFile = new FileInfo(path);
 
             try
             {
                 using (ExcelPackage excelPackage = new ExcelPackage(reportFile))
                 {
-                    ExcelWorksheet worksheet = excelPackage.Workbook.Worksheets.Add(sheetName);
-                    //Add the headers
-                    worksheet.Cells[1, 1].Value = "学号";
-                    worksheet.Cells[1, 2].Value = "姓名";
-                    worksheet.Cells[1, 3].Value = "跑道号";
-                    worksheet.Cells[1, 4].Value = "成绩";
+                    ExcelWorksheet worksheet = excelPackage.Workbook.Worksheets[1];
+
+                    worksheet.Cells[1, 2].Value = userNameTextBox.Text; //负责人
+                    worksheet.Cells[2, 2].Value = DateTime.Now.ToString("yyyy/MM/dd");    //日期
 
                     for (int i = 0; i < order; i++)
                     {
-                        DataRow dr = dt.Rows[i];
-                        worksheet.Cells[i + 2, 1].Value = dr["ID"];
-                        worksheet.Cells[i + 2, 2].Value = dr["Name"];
-                        worksheet.Cells[i + 2, 3].Value = dr["Runway"];
-                        worksheet.Cells[i + 2, 4].Value = dr["Score"];
+                        for (int j = 1; j < dt.Columns.Count; j++)
+                        {
+                            worksheet.Cells[i + 5, j].Value = dt.Rows[i][j];
+                        }
                     }
-
-                    worksheet.Cells.AutoFitColumns(0);  //Autofit columns for all cells
-
-                    using (var range = worksheet.Cells[1, 1, order + 1, 4])
-                    {
-                        range.Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
-                        range.Style.VerticalAlignment = ExcelVerticalAlignment.Center;
-                    }
-
                     // save our new workbook and we are done!
                     excelPackage.Save();
                 }
