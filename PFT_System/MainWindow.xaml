@@ -85,12 +85,12 @@
                                     <DataGridTextColumn Binding="{Binding Height}" Header="身高" Width="60"></DataGridTextColumn>
                                     <DataGridTextColumn Binding="{Binding Weight}" Header="体重" Width="60"></DataGridTextColumn>
                                     <DataGridTextColumn Binding="{Binding Vital}" Header="肺活量" Width="60"></DataGridTextColumn>
-                                    <DataGridTextColumn Binding="{Binding Run800}" Header="800米" Width="60"></DataGridTextColumn>
-                                    <DataGridTextColumn Binding="{Binding Run1000}" Header="1000米" Width="60"></DataGridTextColumn>
-                                    <DataGridTextColumn Binding="{Binding Run50}" Header="50米" Width="60"></DataGridTextColumn>
+                                    <DataGridTextColumn Binding="{Binding Run800}" Header="800米跑" Width="60"></DataGridTextColumn>
+                                    <DataGridTextColumn Binding="{Binding Run1000}" Header="1000米跑" Width="65"></DataGridTextColumn>
+                                    <DataGridTextColumn Binding="{Binding Run50}" Header="50米跑" Width="60"></DataGridTextColumn>
                                     <DataGridTextColumn Binding="{Binding Jump}" Header="立定跳远" Width="65"></DataGridTextColumn>
                                     <DataGridTextColumn Binding="{Binding Flexion}" Header="坐位体前屈" Width="80"></DataGridTextColumn>
-                                    <DataGridTextColumn Binding="{Binding SitUps}" Header="仰卧起坐" Width="65"></DataGridTextColumn>
+                                    <DataGridTextColumn Binding="{Binding SitUps}" Header="一分钟仰卧起坐" Width="85"></DataGridTextColumn>
                                     <DataGridTextColumn Binding="{Binding PullUp}" Header="引体向上" Width="65"></DataGridTextColumn>
                                 </DataGrid.Columns>
                             </DataGrid>
@@ -167,11 +167,13 @@
                         <!--手动检录-->
                         <Grid Margin="5" DockPanel.Dock="Top">
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="12*"></ColumnDefinition>
+                                <ColumnDefinition Width="10*"></ColumnDefinition>
+                                <ColumnDefinition Width="6*"></ColumnDefinition>
                                 <ColumnDefinition Width="8*"></ColumnDefinition>
                             </Grid.ColumnDefinitions>
-                            <TextBox Name="manualIDTextBox" Grid.Column="0" VerticalAlignment="Center" Padding="3" Margin="5">在此输入学号</TextBox>
-                            <Button Name="manualRegButton" Click="manualRegButton_Click" Grid.Column="1" VerticalAlignment="Center" Padding="3" Margin="5" IsEnabled="False">手动检录</Button>
+                            <TextBox Name="manualIDTextBox" Grid.Column="0" VerticalAlignment="Center" Padding="3" Margin="5">学号</TextBox>
+                            <TextBox Name="manualMachineNumberTextBox" Grid.Column="1" VerticalAlignment="Center" Padding="3" Margin="5">机器号</TextBox>
+                            <Button Name="manualRegButton" Click="manualRegButton_Click" Grid.Column="2" VerticalAlignment="Center" Padding="3" Margin="5" IsEnabled="False">手动检录</Button>
                         </Grid>
                         <!--面板分割-->
                         <Grid Margin="5">
@@ -192,8 +194,9 @@
                                             <RowDefinition Height="25"></RowDefinition>
                                             <RowDefinition Height="25"></RowDefinition>
                                             <RowDefinition Height="25"></RowDefinition>
-                                            <RowDefinition Height="10"></RowDefinition>
-                                            <RowDefinition Height="60"></RowDefinition>
+                                            <RowDefinition Height="0"></RowDefinition>
+                                            <RowDefinition Height="30"></RowDefinition>
+                                            <RowDefinition Height="40"></RowDefinition>
                                         </Grid.RowDefinitions>
                                         <TextBlock Grid.Column="0" Grid.Row="0" Text="学号" VerticalAlignment="Center"/>
                                         <TextBox Name="studentIDTextBox" IsReadOnly="True" Grid.Column="1" Grid.Row="0" Margin="2"/>
@@ -202,10 +205,12 @@
                                         <TextBlock Grid.Column="0" Grid.Row="2" Text="专业班级" VerticalAlignment="Center"/>
                                         <TextBox Name="classTextBox" IsReadOnly="True" Grid.Column="1" Grid.Row="2" Margin="2"/>
                                         <TextBlock Grid.Column="0" Grid.Row="3" Text="性别" VerticalAlignment="Center"/>
-                                        <ComboBox Name="sexComboBox" IsEnabled="False" Grid.Column="1" Grid.Row="3" Margin="2"/>
+                                        <TextBox Name="sexTextBox" IsReadOnly="True" Grid.Column="1" Grid.Row="3" Margin="2"/>
+                                        <TextBlock Grid.Column="0" Grid.Row="4" Text="机器号" VerticalAlignment="Center"/>
+                                        <TextBox Name="machineNumberTextBox" IsReadOnly="True" Grid.Column="1" Grid.Row="4" Margin="2"/>
 
-                                        <Button Name="confirmButton" Click="confirmButton_Click" IsEnabled="False" Grid.Column="0" Grid.Row="5" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="3" Margin="5" FontSize="18">确认录入</Button>
-                                        <Button Name="queryButton" Click="queryButton_Click" IsEnabled="{Binding ElementName=confirmButton, Path=IsEnabled}" Grid.Column="1" Grid.Row="5" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="3" Margin="5" FontSize="18">成绩详单</Button>
+                                        <Button Name="confirmButton" Click="confirmButton_Click" IsEnabled="False" Grid.Column="0" Grid.Row="6" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="3" Margin="5" FontSize="18">确认录入</Button>
+                                        <Button Name="queryButton" Click="queryButton_Click" IsEnabled="{Binding ElementName=confirmButton, Path=IsEnabled}" Grid.Column="1" Grid.Row="6" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="3" Margin="5" FontSize="18">成绩详单</Button>
                                     </Grid>
                                 </StackPanel>
                             </GroupBox>

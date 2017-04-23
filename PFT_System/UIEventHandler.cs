@@ -15,6 +15,7 @@ using System.Windows.Threading;
 using System.Windows.Documents;
 using System.Text.RegularExpressions;
 using MySql.Data.MySqlClient;
+using System.Windows.Controls;
 
 //Name          :       Physical Fitness Test System
 //Environment   :       .NET Framework 4.0
@@ -105,12 +106,58 @@ namespace PFT_System
             {
                 MySqlCommand cmd = conn.CreateCommand();//命令对象（用来封装需要在数据库执行的语句）
 
-                for (int i = 0; i < order; i++)
+                foreach (DataRow dr in dt.Rows)
                 {
-                    cmd.CommandText = "UPDATE " + tableName + " SET 50米跑=" + dt.Rows[i]["Score"] + " WHERE 学籍号=" + dt.Rows[i]["ID"];
-                    cmd.ExecuteNonQuery();
-                    //cmd.ExecuteReader();
+                    for (int i = 3; i < dt.Columns.Count; i++)  //0：机器号；1：学号；2：姓名
+                    {
+                        if (dr[i] != null)
+                        {
+                            string itemName = null;
+                            switch (dt.Columns[i].ColumnName)
+                            {
+                                case "Height":
+                                    itemName = "身高";
+                                    break;
+                                case "Weight":
+                                    itemName = "体重";
+                                    break;
+                                case "Vital":
+                                    itemName = "肺活量";
+                                    break;
+                                case "Run800":
+                                    itemName = "800米跑";
+                                    break;
+                                case "Run1000":
+                                    itemName = "1000米跑";
+                                    break;
+                                case "Run50":
+                                    itemName = "50米跑";
+                                    break;
+                                case "Jump":
+                                    itemName = "立定跳远";
+                                    break;
+                                case "Flexion":
+                                    itemName = "坐位体前屈";
+                                    break;
+                                case "SitUps":
+                                    itemName = "一分钟仰卧起坐";
+                                    break;
+                                case "PullUp":
+                                    itemName = "引体向上";
+                                    break;
+                            }
+                            cmd.CommandText = "UPDATE " + tableName + " SET " + itemName + "=" + dr[i] + " WHERE 学籍号=" + dt.Rows[i]["ID"];
+                            cmd.ExecuteNonQuery();
+                        }
+                    }
                 }
+
+                //for (int i = 0; i < order; i++)
+                //{
+                //    cmd.CommandText = "UPDATE " + tableName + " SET 50米跑=" + dt.Rows[i]["Run50"] + " WHERE 学籍号=" + dt.Rows[i]["ID"];
+                //    cmd.ExecuteNonQuery();
+                //    //cmd.ExecuteReader();
+                //}
 
                 StatusBar("成功提交到数据库！", "Yellow");
 
@@ -206,20 +253,40 @@ namespace PFT_System
         #region 操作面板
         private void manualRegButton_Click(object sender, RoutedEventArgs e)
         {
-            string ID = manualIDTextBox.Text;
-            Register(ID);
+            try
+            {
+                string manualID = manualIDTextBox.Text;
+                int manualMachineNumber = int.Parse(manualMachineNumberTextBox.Text);
+                Register(manualID, manualMachineNumber);
+            }
+            catch (Exception ex)
+            {
+                StatusBar(ex.Message, "Red");
+            }
         }
 
         private void confirmButton_Click(object sender, RoutedEventArgs e)
         {
-            //若已存在不再重复添加
+            //若已存在ID，变更机器
             if (dt.Select("ID=" + studentIDTextBox.Text).Length.Equals(1))
-                return;
+            {
+                DataRow[] arrayDR = dt.Select("ID=" + studentIDTextBox.Text);
+                foreach (DataRow dr in arrayDR)
+                {
+                    dr["Machine"] = machineNumberTextBox.Text;
+                    break;
+                }
+            }
+            else if (dt.Select("Machine=" + machineNumberTextBox.Text).Length.Equals(1))
+            {
+                StatusBar("机器仍在使用中！", "Red");
+            }
             else
             {
                 order++;
                 runwayTextBlock.Text = order.ToString();
                 DataRow dr = dt.NewRow();
+                dr["Machine"] = machineNumberTextBox.Text;
                 dr["ID"] = studentIDTextBox.Text;
                 dr["Name"] = nameTextBox.Text;
                 dt.Rows.Add(dr);
@@ -598,6 +665,7 @@ namespace PFT_System
             if (dt != null) dt.Dispose();
             dt = new DataTable();
 
+            dt.Columns.Add("Machine");  //Hidden
             dt.Columns.Add("ID");
             dt.Columns.Add("Name");
             dt.Columns.Add("Height");
@@ -613,11 +681,11 @@ namespace PFT_System
             mainDataGrid.ItemsSource = dt.DefaultView;
         }
 
-        private void Register(string ID)
+        private void Register(string studentID, int machineNumber)
         {
             //try-catch
             MySqlCommand cmd = conn.CreateCommand();//命令对象（用来封装需要在数据库执行的语句）
-            cmd.CommandText = "SELECT * FROM " + tableName + " WHERE 学籍号=" + ID;
+            cmd.CommandText = "SELECT * FROM " + tableName + " WHERE 学籍号=" + studentID;
             try
             {
                 MySqlDataReader sdr = cmd.ExecuteReader();
@@ -626,11 +694,18 @@ namespace PFT_System
                     //循环读取返回的数据
                     while (sdr.Read())
                     {
-                        studentIDTextBox.Text = ID;
+                        studentIDTextBox.Text = studentID;
                         nameTextBox.Text = sdr.GetString(sdr.GetOrdinal("姓名"));
                         classTextBox.Text = sdr.GetString(sdr.GetOrdinal("班级名称"));
-                        sexComboBox.ItemsSource = new string[] { "男", "女" };
-                        sexComboBox.SelectedIndex = sdr.GetInt32(sdr.GetOrdinal("性别")) - 1;
+                        if (sdr.GetInt32(sdr.GetOrdinal("性别")) == 1)
+                        {
+                            sexTextBox.Text = "男";
+                        }
+                        else if (sdr.GetInt32(sdr.GetOrdinal("性别")) == 2)
+                        {
+                            sexTextBox.Text = "女";
+                        }
+                        machineNumberTextBox.Text = machineNumber.ToString();
                     }
                 }
                 sdr.Close();
@@ -803,46 +878,130 @@ namespace PFT_System
 
         private void DataProcess(string data)
         {
-            if (Regex.IsMatch(data, @"^ID\d{9}$"))
+            if (Regex.IsMatch(data, @"^M\d{2}I\d{2}D\d{2,9}E$"))
             {
-                string ID = data.Substring(2);
-                StatusBar("学号为 " + ID + " 的学生进行检录。", "Blue");
-                try
-                {
-                    Register(ID);
-                }
-                catch (Exception ex)
-                {
-                    StatusBar(ex.Message, "Red");
-                }
-            }
-            else if (Regex.IsMatch(data, @"^START$"))
-            {
-                SerialPortWrite("Started!");    //回复开始信号
-                StatusBar("开始计时！", "Blue");
-                stopwatchResetButton.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
-                stopwatchStartPauseButton.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
-            }
-            else if (Regex.IsMatch(data, @"^AR\d{1,2}$"))
-            {
-                string arrive = data.Substring(2);
+                data = GetSubString(data, data.Length - 1); //去掉结尾的E
+                int machineNumber = int.Parse(data.Substring(1, 2));    ///得到机器号
+                int itemNumber = int.Parse(data.Substring(3, 2));   //得到项目代号
+                int dataContent = int.Parse(data.Substring(7)); //得到项目数据
 
-                //若已存在不再重复添加
-                if (dt.Select("Runway=" + arrive + " and Score is not null").Length.Equals(1))
-                    return;
-                else
+                DataRow[] arrayDR;
+                switch (itemNumber) //下版本应当不再区分项目编号，直接得到项目名称和项目成绩
                 {
-                    StatusBar("跑道号为 " + arrive + " 的学生已经冲线。", "Yellow");
-
-                    try
-                    {
-                        DataRow dr = dt.Rows[int.Parse(arrive) - 1];
-                        dr["Score"] = (stopwatch.ElapsedMilliseconds / 1000.0).ToString("F1");
-                    }
-                    catch (Exception ex)
-                    {
-                        StatusBar(ex.Message, "Red");
-                    }
+                    case 0: //检录：内容为学号，9位
+                        string studentID = dataContent.ToString();
+                        StatusBar("学号为 " + studentID + " 的学生进行检录。", "Blue");
+                        try
+                        {
+                            Register(studentID, machineNumber);
+                        }
+                        catch (Exception ex)
+                        {
+                            StatusBar(ex.Message, "Red");
+                        }
+                        break;
+                    case 1: //身高：4位数，以毫米为单位
+                        string height = (dataContent / 10.0).ToString("f1");
+                        arrayDR = dt.Select("Machine=" + machineNumber);
+                        foreach (DataRow dr in arrayDR)
+                        {
+                            dr["Height"] = height;
+                            break;
+                        }
+                        StatusBar("机器号为 " + machineNumber + " 的学生身高是" + height + "厘米。", "Yellow");
+                        break;
+                    case 2: //体重：3位数，以百克为单位
+                        string weight = (dataContent / 10.0).ToString("f1");
+                        arrayDR = dt.Select("Machine=" + machineNumber);
+                        foreach (DataRow dr in arrayDR)
+                        {
+                            dr["Weight"] = weight;
+                            break;
+                        }
+                        StatusBar("机器号为 " + machineNumber + " 的学生体重是" + weight + "千克。", "Yellow");
+                        break;
+                    case 3: //肺活量：4位数
+                        string vital = dataContent.ToString();
+                        arrayDR = dt.Select("Machine=" + machineNumber);
+                        foreach (DataRow dr in arrayDR)
+                        {
+                            dr["Vital"] = vital;
+                            break;
+                        }
+                        StatusBar("机器号为 " + machineNumber + " 的学生肺活量是" + vital + "。", "Yellow");
+                        break;
+                    case 4: //800米：3位数，以秒为单位
+                        TimeSpan ts800 = new TimeSpan(0, 0, dataContent);
+                        string run800 = ts800.Minutes + "'" + ts800.Seconds;
+                        arrayDR = dt.Select("Machine=" + machineNumber);
+                        foreach (DataRow dr in arrayDR)
+                        {
+                            dr["Run800"] = run800;
+                            break;
+                        }
+                        StatusBar("机器号为 " + machineNumber + " 的学生800米成绩是" + run800 + "。", "Yellow");
+                        break;
+                    case 5: //1000米：3位数，以秒为单位
+                        TimeSpan ts1000 = new TimeSpan(0, 0, dataContent);
+                        string run1000 = ts1000.Minutes + "'" + ts1000.Seconds;
+                        arrayDR = dt.Select("Machine=" + machineNumber);
+                        foreach (DataRow dr in arrayDR)
+                        {
+                            dr["Run1000"] = run1000;
+                            break;
+                        }
+                        StatusBar("机器号为 " + machineNumber + " 的学生1000米成绩是" + run1000 + "。", "Yellow");
+                        break;
+                    case 6: //50米：3位数，以百豪秒为单位
+                        string run50 = (dataContent / 10.0).ToString("f1");
+                        arrayDR = dt.Select("Machine=" + machineNumber);
+                        foreach (DataRow dr in arrayDR)
+                        {
+                            dr["Run50"] = run50;
+                            break;
+                        }
+                        StatusBar("机器号为 " + machineNumber + " 的学生50米成绩是" + run50 + "秒。", "Yellow");
+                        break;
+                    case 7: //立定跳远：3位数，以厘米为单位
+                        string jump = dataContent.ToString("f2");
+                        arrayDR = dt.Select("Machine=" + machineNumber);
+                        foreach (DataRow dr in arrayDR)
+                        {
+                            dr["Jump"] = jump;
+                            break;
+                        }
+                        StatusBar("机器号为 " + machineNumber + " 的学生立定跳远成绩是" + jump + "厘米。", "Yellow");
+                        break;
+                    case 8: //坐位体前屈：3位数，以毫米为单位
+                        string flexion = (dataContent / 10.0).ToString("f1");
+                        arrayDR = dt.Select("Machine=" + machineNumber);
+                        foreach (DataRow dr in arrayDR)
+                        {
+                            dr["Flexion"] = flexion;
+                            break;
+                        }
+                        StatusBar("机器号为 " + machineNumber + " 的学生坐位体前屈成绩是" + flexion + "厘米。", "Yellow");
+                        break;
+                    case 9: //仰卧起坐：个
+                        string sitUps = dataContent.ToString();
+                        arrayDR = dt.Select("Machine=" + machineNumber);
+                        foreach (DataRow dr in arrayDR)
+                        {
+                            dr["SitUps"] = sitUps;
+                            break;
+                        }
+                        StatusBar("机器号为 " + machineNumber + " 的学生仰卧起坐成绩是" + sitUps + "个。", "Yellow");
+                        break;
+                    case 10: //引体向上：个
+                        string pullUp = dataContent.ToString();
+                        arrayDR = dt.Select("Machine=" + machineNumber);
+                        foreach (DataRow dr in arrayDR)
+                        {
+                            dr["PullUp"] = pullUp;
+                            break;
+                        }
+                        StatusBar("机器号为 " + machineNumber + " 的学生引体向上成绩是" + pullUp + "个。", "Yellow");
+                        break;
                 }
             }
             else
