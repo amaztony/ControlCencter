@@ -168,6 +168,82 @@ namespace PFT_System
                 return;
             }
         }
+
+        private void exportEduButton_Click(object sender, RoutedEventArgs e)
+        {
+            string sheetName = "沈阳工业大学体测结果";
+
+            Microsoft.Win32.SaveFileDialog dialog =
+                new Microsoft.Win32.SaveFileDialog();
+            dialog.Title = "上报模板另存为";
+            dialog.FileName = sheetName; // Default file name
+            dialog.DefaultExt = ".xlsx"; // Default file extension
+            dialog.Filter = "Excel 工作薄|*.xlsx"; // Filter files by extension
+
+            string path = string.Empty;
+
+            // Process save file dialog box results
+            if (dialog.ShowDialog() == true)
+            {
+                // Save document
+                path = dialog.FileName;
+            }
+            else return;
+
+            FileInfo reportFile = new FileInfo(path);
+
+            if (reportFile.Exists)
+            {
+                File.Copy(path, "上报模板导出前备份" + DateTime.Now.ToString("HHmm") + @".bak");
+                reportFile.Delete();  // ensures we create a new workbook
+                //File.Create(path);
+            }
+            try
+            {
+                File.Copy("exportModel.xlsx", path);
+                reportFile = new FileInfo(path);
+            }
+            catch (Exception ex)
+            {
+                StatusBar(ex.Message, "Red");
+            }
+
+            try
+            {
+                using (ExcelPackage excelPackage = new ExcelPackage(reportFile))
+                {
+                    ExcelWorksheet worksheet = excelPackage.Workbook.Worksheets[1];
+
+                    MySqlCommand cmd = conn.CreateCommand();//命令对象（用来封装需要在数据库执行的语句）
+                    cmd.CommandText = "SELECT * FROM " + tableName;
+                    MySqlDataReader sdr = cmd.ExecuteReader();
+                    int excelRow = 2;
+                    if (sdr.HasRows)
+                    {
+                        //循环读取返回的数据
+                        while (sdr.Read())
+                        {
+                            for (int excelColumn = 1; excelColumn < 20; excelColumn++)
+                            {
+                                try { worksheet.Cells[excelRow, excelColumn].Value = sdr.GetString(excelColumn - 1); } catch (Exception) { }
+                            }
+
+                            excelRow++;
+                        }
+                    }
+                    sdr.Close();
+
+                    excelPackage.Save();
+                }
+
+                StatusBar("保存成功 " + path, "Yellow");
+            }
+            catch (Exception ex)
+            {
+                StatusBar(ex.Message, "Red");
+                return;
+            }
+        }
         #endregion
 
         #region Excel面板
@@ -335,7 +411,7 @@ namespace PFT_System
                     string ID = studentIDTextBox.Text;
 
                     ExcelWorksheet worksheet = excelPackage.Workbook.Worksheets[1];
-                    //Add the headers
+                    
                     worksheet.Cells[4, 2].Value = ID;
                     worksheet.Cells[4, 4].Value = nameTextBox.Text;
                     worksheet.Cells[5, 2].Value = classTextBox.Text;

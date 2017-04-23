@@ -63,9 +63,11 @@
                                 <ColumnDefinition Width="100"></ColumnDefinition>
                                 <ColumnDefinition Width="100*"></ColumnDefinition>
                                 <ColumnDefinition Width="100"></ColumnDefinition>
+                                <ColumnDefinition Width="150"></ColumnDefinition>
                             </Grid.ColumnDefinitions>
                             <Button Grid.Column="0" Name="saveAsReportButton" Click="saveAsReportButton_Click" Padding="3" Margin="5">另存报告</Button>
                             <Button Grid.Column="2" Name="updateSqlButton" Click="updateSqlButton_Click" Padding="3" Margin="5" IsEnabled="{Binding ElementName=manualRegButton, Path=IsEnabled}">提交成绩</Button>
+                            <Button Grid.Column="3" Name="exportEduButton" Click="exportEduButton_Click" Padding="3" Margin="5" IsEnabled="{Binding ElementName=manualRegButton, Path=IsEnabled}">导出上报教育部模板</Button>
                         </Grid>
                         <!--数据表格-->
                         <Grid Margin="5">
