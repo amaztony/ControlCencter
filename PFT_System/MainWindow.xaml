@@ -172,7 +172,7 @@
                                 <ColumnDefinition Width="8*"></ColumnDefinition>
                             </Grid.ColumnDefinitions>
                             <TextBox Name="manualIDTextBox" Grid.Column="0" VerticalAlignment="Center" Padding="3" Margin="5">学号</TextBox>
-                            <TextBox Name="manualMachineNumberTextBox" Grid.Column="1" VerticalAlignment="Center" Padding="3" Margin="5">机器号</TextBox>
+                            <TextBox Name="manualMachineNumberTextBox" Grid.Column="1" VerticalAlignment="Center" Padding="3" Margin="5">机器</TextBox>
                             <Button Name="manualRegButton" Click="manualRegButton_Click" Grid.Column="2" VerticalAlignment="Center" Padding="3" Margin="5" IsEnabled="False">手动检录</Button>
                         </Grid>
                         <!--面板分割-->

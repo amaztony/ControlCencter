@@ -202,8 +202,15 @@ namespace PFT_System
                 reportFile.Delete();  // ensures we create a new workbook
                 //File.Create(path);
             }
-            File.Copy("reportModel.xlsx", path);
-            reportFile = new FileInfo(path);
+            try
+            {
+                File.Copy("reportModel.xlsx", path);
+                reportFile = new FileInfo(path);
+            }
+            catch (Exception ex)
+            {
+                StatusBar(ex.Message, "Red");
+            }
 
             try
             {
@@ -309,8 +316,16 @@ namespace PFT_System
             {
                 File.Copy(path, "详单生成前备份" + DateTime.Now.ToString("HHmm") + @".bak");
                 reportFile.Delete();  // ensures we create a new workbook
-                reportFile = new FileInfo(path);
                 //File.Create(path);
+            }
+            try
+            {
+                File.Copy("queryModel.xlsx", path);
+                reportFile = new FileInfo(path);
+            }
+            catch (Exception ex)
+            {
+                StatusBar(ex.Message, "Red");
             }
 
             try
@@ -319,30 +334,11 @@ namespace PFT_System
                 {
                     string ID = studentIDTextBox.Text;
 
-                    ExcelWorksheet worksheet = excelPackage.Workbook.Worksheets.Add(sheetName);
+                    ExcelWorksheet worksheet = excelPackage.Workbook.Worksheets[1];
                     //Add the headers
-                    worksheet.Cells[1, 1].Value = "学号";
-                    worksheet.Cells[1, 2].Value = ID;
-                    worksheet.Cells[1, 3].Value = "姓名";
-                    worksheet.Cells[1, 4].Value = nameTextBox.Text;
-                    worksheet.Cells[1, 5].Value = "专业班级";
-                    worksheet.Cells[1, 6].Value = classTextBox.Text;
-
-                    worksheet.Cells[2, 1].Value = "性别代码";//"性别"：1-男，2-女
-                    worksheet.Cells[2, 3].Value = "出生日期";
-                    worksheet.Cells[2, 5].Value = "家庭住址";
-
-                    worksheet.Cells[3, 1].Value = "身高";
-                    worksheet.Cells[3, 3].Value = "体重";
-                    worksheet.Cells[3, 5].Value = "肺活量";
-
-                    worksheet.Cells[4, 1].Value = "50米跑";
-                    worksheet.Cells[4, 3].Value = "立定跳远";
-                    worksheet.Cells[4, 5].Value = "坐位体前屈";
-
-                    worksheet.Cells[5, 1].Value = "800米跑";
-                    worksheet.Cells[5, 3].Value = "1000米跑";
-                    worksheet.Cells[5, 5].Value = "1分钟仰卧起坐";
+                    worksheet.Cells[4, 2].Value = ID;
+                    worksheet.Cells[4, 4].Value = nameTextBox.Text;
+                    worksheet.Cells[5, 2].Value = classTextBox.Text;
 
                     MySqlCommand cmd = conn.CreateCommand();//命令对象（用来封装需要在数据库执行的语句）
                     cmd.CommandText = "SELECT * FROM " + tableName + " WHERE 学籍号=" + ID;
@@ -352,33 +348,25 @@ namespace PFT_System
                         //循环读取返回的数据
                         while (sdr.Read())
                         {
-                            try { worksheet.Cells[2, 2].Value = sdr.GetString(sdr.GetOrdinal("性别")); } catch (Exception) { }
-                            try { worksheet.Cells[2, 4].Value = sdr.GetString(sdr.GetOrdinal("出生日期")); } catch (Exception) { }
-                            try { worksheet.Cells[2, 6].Value = sdr.GetString(sdr.GetOrdinal("家庭住址")); } catch (Exception) { }
+                            try { worksheet.Cells[5, 4].Value = sdr.GetString(sdr.GetOrdinal("性别")); } catch (Exception) { }
+                            try { worksheet.Cells[6, 2].Value = sdr.GetString(sdr.GetOrdinal("出生日期")); } catch (Exception) { }
+                            try { worksheet.Cells[6, 4].Value = sdr.GetString(sdr.GetOrdinal("家庭住址")); } catch (Exception) { }
 
-                            try { worksheet.Cells[3, 2].Value = sdr.GetString(sdr.GetOrdinal("身高")); } catch (Exception) { }
-                            try { worksheet.Cells[3, 4].Value = sdr.GetString(sdr.GetOrdinal("体重")); } catch (Exception) { }
-                            try { worksheet.Cells[3, 6].Value = sdr.GetString(sdr.GetOrdinal("肺活量")); } catch (Exception) { }
+                            try { worksheet.Cells[8, 2].Value = sdr.GetString(sdr.GetOrdinal("身高")); } catch (Exception) { }
+                            try { worksheet.Cells[9, 2].Value = sdr.GetString(sdr.GetOrdinal("体重")); } catch (Exception) { }
+                            try { worksheet.Cells[10, 2].Value = sdr.GetString(sdr.GetOrdinal("50米跑")); } catch (Exception) { }
+                            try { worksheet.Cells[11, 2].Value = sdr.GetString(sdr.GetOrdinal("800米跑")); } catch (Exception) { }
+                            try { worksheet.Cells[12, 2].Value = sdr.GetString(sdr.GetOrdinal("1000米跑")); } catch (Exception) { }
 
-                            try { worksheet.Cells[4, 2].Value = sdr.GetString(sdr.GetOrdinal("50米跑")); } catch (Exception) { }
-                            try { worksheet.Cells[4, 4].Value = sdr.GetString(sdr.GetOrdinal("立定跳远")); } catch (Exception) { }
-                            try { worksheet.Cells[4, 6].Value = sdr.GetString(sdr.GetOrdinal("坐位体前屈")); } catch (Exception) { }
-
-                            try { worksheet.Cells[5, 2].Value = sdr.GetString(sdr.GetOrdinal("800米跑")); } catch (Exception) { }
-                            try { worksheet.Cells[5, 4].Value = sdr.GetString(sdr.GetOrdinal("1000米跑")); } catch (Exception) { }
-                            try { worksheet.Cells[5, 6].Value = sdr.GetString(sdr.GetOrdinal("1分钟仰卧起坐")); } catch (Exception) { }
+                            try { worksheet.Cells[8, 4].Value = sdr.GetString(sdr.GetOrdinal("肺活量")); } catch (Exception) { }
+                            try { worksheet.Cells[9, 4].Value = sdr.GetString(sdr.GetOrdinal("立定跳远")); } catch (Exception) { }
+                            try { worksheet.Cells[10, 4].Value = sdr.GetString(sdr.GetOrdinal("坐位体前屈")); } catch (Exception) { }
+                            try { worksheet.Cells[11, 4].Value = sdr.GetString(sdr.GetOrdinal("1分钟仰卧起坐")); } catch (Exception) { }
+                            try { worksheet.Cells[12, 4].Value = sdr.GetString(sdr.GetOrdinal("引体向上")); } catch (Exception) { }
                         }
                     }
                     sdr.Close();
-
-                    worksheet.Cells.AutoFitColumns(0);  //Autofit columns for all cells
-
-                    using (var range = worksheet.Cells[1, 1, 5, 6])
-                    {
-                        range.Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
-                        range.Style.VerticalAlignment = ExcelVerticalAlignment.Center;
-                    }
-
+                    
                     excelPackage.Save();
                 }
 
