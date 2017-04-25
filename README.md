@@ -1,11 +1,15 @@
 # ControlCencter
 
-Windows 8/8.1/10:
-  Just open the .exe file.
+-Windows 8/8.1/10:
 
-Windows XP/Vista/7:
-  Ensure that Microsoft .NET Framework 4.0 installed.  
-  Run.
+    1.Just open the .exe file.
+
+-Windows XP/Vista/7:
+
+    1.Ensure that Microsoft .NET Framework 4.0 installed.  
+    2.Run.
   
   
-PFT_System and so on.
+  
+  
+PFT_System and some test programs.
