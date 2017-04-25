@@ -49,7 +49,8 @@ namespace PFT_System
         string userName;
         string userPassword;
         static string databaseName = "china_pft";
-        static string tableName = "sut";
+        static string pftTableName = "sut_pft";
+        static string cardInfoTableName = "card_info";
         MySqlConnection conn;
 
         #region 数据库面板
@@ -144,7 +145,7 @@ namespace PFT_System
                                     itemName = "引体向上";
                                     break;
                             }
-                            cmd.CommandText = "UPDATE " + tableName + " SET " + itemName + "=" + dr[i] + " WHERE 学籍号=" + dt.Rows[i]["ID"];
+                            cmd.CommandText = "UPDATE " + pftTableName + " SET " + itemName + "=" + dr[i] + " WHERE 学籍号=" + dt.Rows[i]["ID"];
                             cmd.ExecuteNonQuery();
                         }
                     }
@@ -152,7 +153,7 @@ namespace PFT_System
 
                 //for (int i = 0; i < order; i++)
                 //{
-                //    cmd.CommandText = "UPDATE " + tableName + " SET 50米跑=" + dt.Rows[i]["Run50"] + " WHERE 学籍号=" + dt.Rows[i]["ID"];
+                //    cmd.CommandText = "UPDATE " + pftTableName + " SET 50米跑=" + dt.Rows[i]["Run50"] + " WHERE 学籍号=" + dt.Rows[i]["ID"];
                 //    cmd.ExecuteNonQuery();
                 //    //cmd.ExecuteReader();
                 //}
@@ -213,7 +214,7 @@ namespace PFT_System
                     ExcelWorksheet worksheet = excelPackage.Workbook.Worksheets[1];
 
                     MySqlCommand cmd = conn.CreateCommand();//命令对象（用来封装需要在数据库执行的语句）
-                    cmd.CommandText = "SELECT * FROM " + tableName;
+                    cmd.CommandText = "SELECT * FROM " + pftTableName;
                     MySqlDataReader sdr = cmd.ExecuteReader();
                     int excelRow = 2;
                     if (sdr.HasRows)
@@ -412,7 +413,7 @@ namespace PFT_System
                     worksheet.Cells[5, 2].Value = classTextBox.Text;
 
                     MySqlCommand cmd = conn.CreateCommand();//命令对象（用来封装需要在数据库执行的语句）
-                    cmd.CommandText = "SELECT * FROM " + tableName + " WHERE 学籍号=" + ID;
+                    cmd.CommandText = "SELECT * FROM " + pftTableName + " WHERE 学籍号=" + ID;
                     MySqlDataReader sdr = cmd.ExecuteReader();
                     if (sdr.HasRows)
                     {
@@ -662,7 +663,7 @@ namespace PFT_System
         {
             //try-catch
             MySqlCommand cmd = conn.CreateCommand();//命令对象（用来封装需要在数据库执行的语句）
-            cmd.CommandText = "SELECT * FROM " + tableName + " WHERE 学籍号=" + studentID;
+            cmd.CommandText = "SELECT * FROM " + pftTableName + " WHERE 学籍号=" + studentID;
             try
             {
                 MySqlDataReader sdr = cmd.ExecuteReader();
@@ -828,20 +829,43 @@ namespace PFT_System
             //recvDataRichTextBox.AppendText(data + "\r\n");
         }
 
+        //Test string:"M01I00D2502689101E"
+        private string queryStudentID(string cardNumber)
+        {
+            string studentID = String.Empty;
+            MySqlCommand cmd = conn.CreateCommand();//命令对象（用来封装需要在数据库执行的语句）
+            cmd.CommandText = "SELECT * FROM " + cardInfoTableName + " WHERE 卡号=" + cardNumber;
+            MySqlDataReader sdr = cmd.ExecuteReader();
+            if (sdr.HasRows)
+            {
+                //循环读取返回的数据
+                while (sdr.Read())
+                {
+                    try { studentID = sdr.GetString(0); } catch (Exception) { }
+                }
+            }
+            sdr.Close();
+            return studentID;
+        }
+
         private void DataProcess(string data)
         {
-            if (Regex.IsMatch(data, @"^M\d{2}I\d{2}D\d{2,9}E$"))
+            if (Regex.IsMatch(data, @"^M\d{2}I\d{2}D\d{2,10}E$"))
             {
                 data = GetSubString(data, data.Length - 1); //去掉结尾的E
                 int machineNumber = int.Parse(data.Substring(1, 2));    ///得到机器号
-                int itemNumber = int.Parse(data.Substring(3, 2));   //得到项目代号
-                int dataContent = int.Parse(data.Substring(7)); //得到项目数据
+                int itemNumber = int.Parse(data.Substring(4, 2));   //得到项目代号
+                int dataContent = 0;
+                if (itemNumber != 0)
+                {
+                    dataContent = int.Parse(data.Substring(7)); //得到项目数据
+                }
 
                 DataRow[] arrayDR;
                 switch (itemNumber) //下版本应当不再区分项目编号，直接得到项目名称和项目成绩
                 {
                     case 0: //检录：内容为学号，9位
-                        string studentID = dataContent.ToString();
+                        string studentID = queryStudentID(data.Substring(7));
                         StatusBar("学号为 " + studentID + " 的学生进行检录。", "Blue");
                         try
                         {
