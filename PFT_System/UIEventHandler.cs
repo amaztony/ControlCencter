@@ -830,7 +830,7 @@ namespace PFT_System
         }
 
         //Test string:"M01I00D2502689101E"
-        private string queryStudentID(string cardNumber)
+        private string queryStudentID(uint cardNumber)
         {
             string studentID = String.Empty;
             MySqlCommand cmd = conn.CreateCommand();//命令对象（用来封装需要在数据库执行的语句）
@@ -855,17 +855,14 @@ namespace PFT_System
                 data = GetSubString(data, data.Length - 1); //去掉结尾的E
                 int machineNumber = int.Parse(data.Substring(1, 2));    ///得到机器号
                 int itemNumber = int.Parse(data.Substring(4, 2));   //得到项目代号
-                int dataContent = 0;
-                if (itemNumber != 0)
-                {
-                    dataContent = int.Parse(data.Substring(7)); //得到项目数据
-                }
+                uint dataContent = 0;
+                dataContent = uint.Parse(data.Substring(6)); //得到项目数据
 
                 DataRow[] arrayDR;
                 switch (itemNumber) //下版本应当不再区分项目编号，直接得到项目名称和项目成绩
                 {
                     case 0: //检录：内容为学号，9位
-                        string studentID = queryStudentID(data.Substring(7));
+                        string studentID = queryStudentID(dataContent);
                         StatusBar("学号为 " + studentID + " 的学生进行检录。", "Blue");
                         try
                         {
@@ -907,7 +904,7 @@ namespace PFT_System
                         StatusBar("机器号为 " + machineNumber + " 的学生肺活量是" + vital + "。", "Yellow");
                         break;
                     case 4: //800米：3位数，以秒为单位
-                        TimeSpan ts800 = new TimeSpan(0, 0, dataContent);
+                        TimeSpan ts800 = new TimeSpan(0, 0, (int)dataContent);
                         string run800 = ts800.Minutes + "'" + ts800.Seconds;
                         arrayDR = dt.Select("Machine=" + machineNumber);
                         foreach (DataRow dr in arrayDR)
@@ -918,7 +915,7 @@ namespace PFT_System
                         StatusBar("机器号为 " + machineNumber + " 的学生800米成绩是" + run800 + "。", "Yellow");
                         break;
                     case 5: //1000米：3位数，以秒为单位
-                        TimeSpan ts1000 = new TimeSpan(0, 0, dataContent);
+                        TimeSpan ts1000 = new TimeSpan(0, 0, (int)dataContent);
                         string run1000 = ts1000.Minutes + "'" + ts1000.Seconds;
                         arrayDR = dt.Select("Machine=" + machineNumber);
                         foreach (DataRow dr in arrayDR)
