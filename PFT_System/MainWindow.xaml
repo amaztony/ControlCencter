@@ -145,7 +145,7 @@
                             <!--发送区-->
                             <GroupBox Grid.Row="1" Header="发送区" BorderThickness="1" BorderBrush="#FF7199E0">
                                 <StackPanel>
-                                    <TextBox Name="sendDataTextBox" FontFamily="Lucida Console" Grid.Column="0" VerticalAlignment="Center" Padding="3" Margin="5">Test</TextBox>
+                                    <TextBox Name="sendDataTextBox" FontFamily="Lucida Console" Grid.Column="0" VerticalAlignment="Center" Padding="3" Margin="5">M01I03D330499120E</TextBox>
                                     <Grid>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="10*"></ColumnDefinition>

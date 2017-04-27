@@ -829,7 +829,7 @@ namespace PFT_System
             //recvDataRichTextBox.AppendText(data + "\r\n");
         }
 
-        //Test string:"M01I00D2502689101E"
+        //Test string:"M01I03D330499120E"
         private string queryStudentID(uint cardNumber)
         {
             string studentID = String.Empty;
