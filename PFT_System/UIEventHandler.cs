@@ -850,13 +850,13 @@ namespace PFT_System
 
         private void DataProcess(string data)
         {
-            if (Regex.IsMatch(data, @"^M\d{2}I\d{2}D\d{2,10}E$"))
+            if ((Regex.IsMatch(data, @"^M\d{2}I\d{2}D\d{2,10}E$"))&&(connectSqlButton.Content.ToString() == "断开连接"))
             {
-                data = GetSubString(data, data.Length - 1); //去掉结尾的E
+                data = data.Substring(0, data.Length - 1); //去掉结尾的E
                 int machineNumber = int.Parse(data.Substring(1, 2));    ///得到机器号
                 int itemNumber = int.Parse(data.Substring(4, 2));   //得到项目代号
                 uint dataContent = 0;
-                dataContent = uint.Parse(data.Substring(6)); //得到项目数据
+                dataContent = uint.Parse(data.Substring(7)); //得到项目数据
 
                 DataRow[] arrayDR;
                 switch (itemNumber) //下版本应当不再区分项目编号，直接得到项目名称和项目成绩
@@ -979,7 +979,7 @@ namespace PFT_System
             }
             else
             {
-                StatusBar("数据格式有误！", "Red");
+                StatusBar("数据格式有误或未连接数据库！", "Red");
             }
 
         }
