@@ -21,7 +21,7 @@ using System.Windows.Controls;
 //Environment   :       .NET Framework 4.0
 //Author        :       Tony G @SUT
 //Email         :       gaozt2014@outlook.com
-//Date          :       2016.12 ~ 2017.1
+//Date          :       2016.12 ~ 2017.5
 
 namespace PFT_System
 {
@@ -109,7 +109,7 @@ namespace PFT_System
                 {
                     for (int i = 3; i < dt.Columns.Count; i++)  //0：机器号；1：学号；2：姓名
                     {
-                        if (dr[i] != null)
+                        if (!Convert.IsDBNull(dr[i]))   //检测非空
                         {
                             string itemName = string.Empty;
                             switch (dt.Columns[i].ColumnName)
@@ -145,7 +145,8 @@ namespace PFT_System
                                     itemName = "引体向上";
                                     break;
                             }
-                            cmd.CommandText = "UPDATE " + pftTableName + " SET " + itemName + "=" + dr[i] + " WHERE 学籍号=" + dt.Rows[i]["ID"];
+                            cmd.CommandText = "UPDATE " + pftTableName + " SET " + itemName + "=" + dr[i] + " WHERE 学籍号=" + dr["ID"];
+                            //StatusBar(cmd.CommandText, "Yellow");
                             cmd.ExecuteNonQuery();
                         }
                     }
@@ -301,7 +302,6 @@ namespace PFT_System
                             worksheet.Cells[i + 5, j].Value = dt.Rows[i][j];
                         }
                     }
-                    // save our new workbook and we are done!
                     excelPackage.Save();
                 }
 
