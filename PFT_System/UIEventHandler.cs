@@ -829,7 +829,7 @@ namespace PFT_System
             //recvDataRichTextBox.AppendText(data + "\r\n");
         }
 
-        //Test string:"M01I03D330499120E"
+        //Test string:"M01I00D330499120E"
         private string queryStudentID(uint cardNumber)
         {
             string studentID = String.Empty;
@@ -850,7 +850,27 @@ namespace PFT_System
 
         private void DataProcess(string data)
         {
-            if ((Regex.IsMatch(data, @"^M\d{2}I\d{2}D\d{2,10}E$"))&&(connectSqlButton.Content.ToString() == "断开连接"))
+            //UID检录匹配，格式为1A2B3C4D
+            if ((Regex.IsMatch(data, @"^M\d{2}I00D[0-9a-fA-F]{8}E$")) && (connectSqlButton.Content.ToString() == "断开连接"))
+            {
+                int machineNumber = int.Parse(data.Substring(1, 2));    ///得到机器号
+                data = data.Substring(7, 8);    //截取UID
+                data = data.Substring(6, 2) + data.Substring(4, 2) + data.Substring(2, 2) + data.Substring(0, 2);   //倒序
+                uint dataContent = 0;
+                dataContent = Convert.ToUInt32(data, 16);  //得到倒序UID转的数字
+                string studentID = queryStudentID(dataContent);
+                StatusBar("学号为 " + studentID + " 的学生进行检录。", "Blue");
+                try
+                {
+                    Register(studentID, machineNumber);
+                }
+                catch (Exception ex)
+                {
+                    StatusBar(ex.Message, "Red");
+                }
+            }
+            //数字卡号匹配及体测项目匹配
+            else if ((Regex.IsMatch(data, @"^M\d{2}I\d{2}D\d{2,10}E$")) && (connectSqlButton.Content.ToString() == "断开连接"))
             {
                 data = data.Substring(0, data.Length - 1); //去掉结尾的E
                 int machineNumber = int.Parse(data.Substring(1, 2));    ///得到机器号
