@@ -34,7 +34,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>Icons\run.ico</ApplicationIcon>
+    <ApplicationIcon>tea.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="EPPlus, Version=4.1.0.0, Culture=neutral, PublicKeyToken=ea159fdaa78159a1, processorArchitecture=MSIL">
@@ -104,6 +104,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Icons\tea.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="tea.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
