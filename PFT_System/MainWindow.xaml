@@ -13,9 +13,9 @@
     <DockPanel Name="rootPanel">
         <!--菜单栏-->
         <!--状态栏-->
-        <StatusBar DockPanel.Dock="Bottom" Name="statusBar" Height="48" Background="#FF007ACC" Padding="2">
+        <StatusBar DockPanel.Dock="Bottom" Name="statusBar" Background="#FF007ACC" Padding="2">
             <StatusBarItem HorizontalAlignment="Left">
-                <TextBlock Name="statusInfoTextBlock" Height="40" Width="398" Foreground="White">欢迎使用学生卡查询系统！（通信波特率固定为4800）</TextBlock>
+                <TextBlock Name="statusInfoTextBlock" Width="398" Foreground="White">欢迎使用学生卡查询系统！（通信波特率固定为4800）</TextBlock>
             </StatusBarItem>
         </StatusBar>
         <!--主体面板-->

@@ -262,10 +262,10 @@ namespace PFT_System
         private string queryStudentID(uint cardNumber)
         {
             string studentID = String.Empty;
-            using (ExcelPackage package = new ExcelPackage(new FileStream(FilePath, FileMode.Open)))
+            using (ExcelPackage package = new ExcelPackage(new FileInfo(FilePath)))
             {
                 ExcelWorksheet sheet = package.Workbook.Worksheets[1];
-                var query1 = (from cell in sheet.Cells["d:d"] where cell.Value.Equals(cardNumber) select cell);
+                var query1 = (from cell in sheet.Cells["d:d"] where (cell.Value.ToString()).Equals(cardNumber.ToString()) select cell);
                 foreach (var cell in query1)
                 {
                     int RowIDx = int.Parse(cell.Address.Substring(1));  //取得行号
