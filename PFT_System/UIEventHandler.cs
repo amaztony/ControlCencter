@@ -259,21 +259,22 @@ namespace PFT_System
             //recvDataRichTextBox.AppendText(data + "\r\n");
         }
 
-        private string queryStudentID(uint cardNumber)
+        private void queryStudentID(uint cardNumber, out string stuID, out string stuName)
         {
-            string studentID = String.Empty;
+            stuID = String.Empty;
+            stuName = String.Empty;
             using (ExcelPackage package = new ExcelPackage(new FileInfo(FilePath)))
             {
                 ExcelWorksheet sheet = package.Workbook.Worksheets[1];
-                var query1 = (from cell in sheet.Cells["d:d"] where (cell.Value.ToString()).Equals(cardNumber.ToString()) select cell);
+                var query1 = (from cell in sheet.Cells["d:d"] where (cell.Text).Equals(cardNumber.ToString()) select cell);
                 foreach (var cell in query1)
                 {
                     int RowIDx = int.Parse(cell.Address.Substring(1));  //取得行号
-                    studentID = sheet.Cells[RowIDx, 1].Value.ToString();
+                    stuID = sheet.Cells[RowIDx, 1].Text;
+                    stuName = sheet.Cells[RowIDx, 2].Text;
                     break;
                 }
             }
-            return studentID;
         }
 
         private void DataProcess(string data)
@@ -286,12 +287,13 @@ namespace PFT_System
                 data = data.Substring(6, 2) + data.Substring(4, 2) + data.Substring(2, 2) + data.Substring(0, 2);   //倒序
                 uint dataContent = 0;
                 dataContent = Convert.ToUInt32(data, 16);  //得到倒序UID转的数字
-                string studentID = String.Empty;
+                
                 try
                 {
-
-                    studentID = queryStudentID(dataContent);
-                    StatusBar("学号为 " + studentID + " 的学生进行检录。", "Blue");
+                    string studentID = String.Empty;
+                    string studentName = String.Empty;
+                    queryStudentID(dataContent, out studentID, out studentName);
+                    StatusBar("学号为 " + studentID + " 的学生开始检录，其姓名为 " + studentName + "。", "Blue");
                 }
                 catch (Exception ex)
                 {

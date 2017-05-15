@@ -9,20 +9,20 @@
         Height="500"
         ResizeMode="CanMinimize"
         SizeToContent="Width"
-        Icon="Icons\run.ico">
+        Icon="Icons\tea.ico">
     <DockPanel Name="rootPanel">
         <!--菜单栏-->
         <!--状态栏-->
         <StatusBar DockPanel.Dock="Bottom" Name="statusBar" Background="#FF007ACC" Padding="2">
             <StatusBarItem HorizontalAlignment="Left">
-                <TextBlock Name="statusInfoTextBlock" Width="398" Foreground="White">欢迎使用学生卡查询系统！（通信波特率固定为4800）</TextBlock>
+                <TextBlock Name="statusInfoTextBlock" Width="398" Foreground="White">欢迎使用学生卡查询系统！</TextBlock>
             </StatusBarItem>
         </StatusBar>
         <!--主体面板-->
         <DockPanel Margin="5">
             <!--通信面板-->
             <Grid Name="communicationPanel" DockPanel.Dock="Right" Visibility="Visible" Width="400">
-                <GroupBox Header="主界面" Margin="5" BorderThickness="1" BorderBrush="#FF7199E0">
+                <GroupBox Header="主界面（通信波特率固定为4800）" Margin="5" BorderThickness="1" BorderBrush="#FF7199E0">
                     <DockPanel>
                         <!--可用端口-->
                         <Grid Margin="0,10" DockPanel.Dock="Top">
