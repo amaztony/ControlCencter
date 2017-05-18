@@ -545,6 +545,14 @@ namespace PFT_System
         private void helpMenuItem_Click(object sender, RoutedEventArgs e)
         {
             //TO-DO: Help
+            try
+            {
+                Process.Start(@"Manual.pdf");
+            }
+            catch (Exception ex)
+            {
+                StatusBar(ex.Message, "Red");
+            }
         }
 
         private void aboutMenuItem_Click(object sender, RoutedEventArgs e)
