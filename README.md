@@ -13,3 +13,7 @@
   
   
 PFT_System and some test programs.
+
+# Screenshot
+
+![main window](/docs/images/mainWidows.png)
