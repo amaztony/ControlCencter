@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.26430.6
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SerialHelper", "ControlCenter\SerialHelper.csproj", "{D116AC8C-94ED-4F6B-B62F-0193E135D629}"
 EndProject
@@ -10,6 +10,13 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EPPlusTest", "EPPlusTest\EPPlusTest.csproj", "{BF0E6ED7-950F-430B-888B-C5154C16C476}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PFT_System", "PFT_System\PFT_System.csproj", "{FB7AF443-590D-41AA-B03D-8772C7FCA4F2}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{75A1D621-FABA-41F9-AE15-6239993E8F2D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "images", "images", "{F09CA6AE-3B2D-415E-AB45-B3A112055084}"
+	ProjectSection(SolutionItems) = preProject
+		docs\images\mainWindow.png = docs\images\mainWindow.png
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -36,5 +43,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{F09CA6AE-3B2D-415E-AB45-B3A112055084} = {75A1D621-FABA-41F9-AE15-6239993E8F2D}
 	EndGlobalSection
 EndGlobal
